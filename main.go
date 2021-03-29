@@ -37,19 +37,20 @@ func main() {
 
 	if len(flag.Args()) == 0 {
 
-		currentDate := time.Now().Format("02 Mon")
-		month := time.Now().Month().String()[0:3]
+		now := time.Now()
+		currentDate := now.Format("02 Mon")
+		month := TrimMonth(now.Month().String())
 		fmt.Println(prompt, month, currentDate)
 
-		// Reminders()
+		Reminders(now)
 
 	} else {
 
 		for i := range flag.Args() {
 			flag.Args()[i] = Transformer(flag.Args()[i])
-			// pass clean args to priority function
-			Charprint("blue", prompt, flag.Args()[i])
 		}
+		PriorityCrunch(flag.Args())
+		// fmt.Println(i)
 
 	}
 

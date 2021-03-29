@@ -13,6 +13,9 @@ func Transformer(arg string) string {
 
 	switch arg {
 
+	case "1", "o", "on", "ot", "one":
+		arg = "one time"
+
 	case "a", "ad", "dad", "dd":
 		arg = "add"
 
@@ -25,11 +28,17 @@ func Transformer(arg string) string {
 	case "ev", "evt", "eve", "evn", "events":
 		arg = "event"
 
+	case "i", "di", "id", "ida", "ide":
+		arg = "idea"
+
 	case "h", "he", "hel", "halp", "man":
 		arg = "help"
 
-	case "l", "ls", "lst", "lsa":
+	case "l", "ll", "ls", "lst", "lsa", "read", "rd":
 		arg = "list"
+
+	case "rc", "rer", "rr", "rec", "recr":
+		arg = "recurrent"
 
 	case "rmn", "rem", "rm", "rmv", "rv":
 		arg = "remove"
@@ -39,6 +48,9 @@ func Transformer(arg string) string {
 
 	case "td", "tod", "todos":
 		arg = "todo"
+
+	case "wl", "ws", "wsl", "wsh", "wish":
+		arg = "wishlist"
 
 	// special case for pulling config
 	case "homedir",
