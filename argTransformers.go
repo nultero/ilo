@@ -12,6 +12,7 @@ import (
 func ArgCleaner(arg string) string {
 
 	//might be cleaner with autocompletes
+	//cleaner to just pass in the whole args array
 
 	switch arg {
 

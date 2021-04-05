@@ -36,6 +36,10 @@ func main() {
 	configs := ConfigureStuff(ArgCleaner("homedir conf"))
 	prompt := string(Parser(configs, "=", "default_prompt") + " ")
 
+	//
+	// pass the whole arg list to the cleaner function instead of this iterating
+	//
+
 	if len(flag.Args()) == 0 { // bx will only check stuff if called passively
 
 		now := time.Now()
