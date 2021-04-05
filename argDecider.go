@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 // multiple kinds of args
 
@@ -9,10 +12,10 @@ import "fmt"
 // noun == priority 2, i.e., reminder, cron, etc
 // modifier == p 3
 
-func PriorityCrunch(args []string) []string {
+func ArgumentPrioritizer(args []string) []string {
 
 	verbNums, nounNums := 0, 0
-	// all args being checked should already be cleaned via Transformer()
+	// all args being checked should already be cleaned via ArgCleaner()
 	for i := range args {
 		if verbs(args[i]) {
 			verbNums++
@@ -21,7 +24,12 @@ func PriorityCrunch(args []string) []string {
 		}
 	}
 
-	fmt.Printf("%v - verbs, %v -nouns", verbNums, nounNums)
+	// limited to only 1 of each
+	if verbNums > 1 || nounNums > 1 {
+		// display what was wrong
+		fmt.Printf("%v - verbs, %v - nouns \n", verbNums, nounNums)
+		bootBackToTerminal(verbNums)
+	}
 
 	return args
 }
@@ -42,7 +50,7 @@ func nouns(match string) bool {
 	case "alias",
 		"event",
 		"idea",
-		"one time",
+		"onetime",
 		"recurrent",
 		"todo",
 		"wishlist":
@@ -51,6 +59,17 @@ func nouns(match string) bool {
 	return false
 }
 
-func tooManyVerbs(args []string) {
+func bootBackToTerminal(faultReason int) {
 
+	fault := "bx's "
+	if faultReason > 1 {
+		fault += "verb"
+	} else {
+		fault += "noun"
+	}
+	fault += " args have been overloaded"
+
+	Charprint("red", "<!>", fault)
+	Charprint("blue", "<!>", "remember: bx can only do one command at a time")
+	os.Exit(0)
 }

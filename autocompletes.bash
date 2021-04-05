@@ -1,0 +1,1 @@
+complete -W "add alias edit event idea help list onetime recurrent remove todo wishlist" bx

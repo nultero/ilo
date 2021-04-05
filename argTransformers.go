@@ -9,12 +9,14 @@ import (
 // these are the canonical function params --
 // "why use lot word few word trick"
 // this is more for passing in lazy/tired CLI arguments than for source
-func Transformer(arg string) string {
+func ArgCleaner(arg string) string {
+
+	//might be cleaner with autocompletes
 
 	switch arg {
 
 	case "1", "o", "on", "ot", "one":
-		arg = "one time"
+		arg = "onetime"
 
 	case "a", "ad", "dad", "dd":
 		arg = "add"

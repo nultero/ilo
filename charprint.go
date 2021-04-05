@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"time"
 )
 
@@ -15,7 +16,7 @@ func Charprint(modifier string, prompt string, output string) {
 
 	subString := ""
 	wrapString := "%v %v"
-	speed := 35
+	speed := 35 //sweet spot for printspeed imo, but is a configable var
 
 	switch modifier { // maybe use a split and map vars from there?
 	case "red":
@@ -27,8 +28,13 @@ func Charprint(modifier string, prompt string, output string) {
 	// 	Teal    "\033[1;36m%s\033[0m")
 	//
 	//
+	case "kinda slow":
+		speed = 45
+
 	case "instant":
 		speed = 0
+
+	case "nil":
 	}
 	wrapString = "\r" + wrapString
 
@@ -38,7 +44,11 @@ func Charprint(modifier string, prompt string, output string) {
 	// definitely helps to stop the eyeglaze from seeing the usual
 	// might even want some fx like lolcat or smthn
 
-	speed -= int(len(output) / 2)
+	//logscale print reduction?
+	normalizedSpeed := math.Log(float64(len(output)))
+
+	speed -= int((normalizedSpeed - 3) * 5)
+	fmt.Printf("\n speed is: %v \n", speed)
 	if speed <= 0 {
 		fmt.Printf(wrapString, prompt, output)
 

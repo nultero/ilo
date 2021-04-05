@@ -23,34 +23,36 @@ import (
 //
 //   ^ all should be fairly transparent from outside tailbox, in native formats or plaintext
 //
-// * RETEST CONFIG
+// * AUTOCOMPLETES IN CONFIG
+// * use last confirm to tidy up dotfile migration
 //
 // change default directory
 // -dir flag for pwd on bx's $home
-// -h flag for forgetting
+// -h flag for forgetting all cmds
 
 func main() {
 
 	flag.Parse()
-	configs := Config(Transformer("homedir conf"))
+	configs := ConfigureStuff(ArgCleaner("homedir conf"))
 	prompt := string(Parser(configs, "=", "default_prompt") + " ")
 
-	if len(flag.Args()) == 0 {
+	if len(flag.Args()) == 0 { // bx will only check stuff if called passively
 
 		now := time.Now()
-		currentDate := now.Format("02 Mon")
+		formattedTime := now.Format("02 Mon")
 		month := TrimMonth(now.Month().String())
-		fmt.Println(prompt, month, currentDate)
+		fmt.Println(prompt, month, formattedTime)
 
-		Reminders(now)
+		CheckReminders(now)
 
 	} else {
 
-		for i := range flag.Args() {
-			flag.Args()[i] = Transformer(flag.Args()[i])
+		for arg := range flag.Args() {
+			flag.Args()[arg] = ArgCleaner(flag.Args()[arg])
+			// fmt.Println(arg)
 		}
-		PriorityCrunch(flag.Args())
-		// fmt.Println(i)
+		ArgumentPrioritizer(flag.Args())
+		// fmt.Println(flag.Args())
 
 	}
 

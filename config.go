@@ -8,13 +8,13 @@ import (
 
 // Config is for prompts, controlling Charprint colors, and what/when types print
 // function itself just inits / grabs those
-func Config(confPath string) string {
+func ConfigureStuff(confPath string) string {
 
 	config, excptn := os.ReadFile(confPath)
 
 	for excptn != nil { // files don't exist / deleted
 
-		var prompt = "❯➤ " // default
+		prompt := "❯➤ " // default
 
 		// user confirms dir  / not making sys changes w/out input
 		confNotFound(confPath, prompt)
@@ -31,22 +31,20 @@ func Config(confPath string) string {
 func confNotFound(confPath string, prompt string) {
 
 	Charprint("red", "<bx>", "No config file found.")
-	dfPath := "Default config path is: " + confPath
-	Charprint("", "<bx>", dfPath)
-	fmt.Println(" ")
-	Charprint("", prompt, "Create new config? (y | n)")
-	Charprint("", prompt, "(bx will just exit if not 'y')")
+	Charprint("", "<bx>", "Default config path is: "+confPath)
+	fmt.Printf(" %s Create new config? (y | n)"+"\t\n(bx will just exit if not 'y') : ", prompt)
 
-	if string(inpt()) == "y" {
-		bxPath := Transformer("homedir")
-		os.Mkdir(bxPath, 0755)
-	} else {
+	if grabInput() == "y" {
+		//bx's homedir in config or wherever
+		os.Mkdir(ArgCleaner("homedir"), 0755)
+
+	} else { // this is if manually exited
 		Charprint("", prompt, "sure thing, pardner")
 		os.Exit(0)
 	}
 }
 
-func inpt() string {
+func grabInput() string {
 	var input string
 	_, err := fmt.Scanln(&input)
 	if err != nil {
@@ -56,22 +54,28 @@ func inpt() string {
 }
 
 func configsOutro(prompt string) {
-	fmt.Println(prompt + " <bx> Folder created.")
-	time.Sleep(700 * time.Millisecond)
-	Charprint("", "", "<bx> Configured defaults.")
-	time.Sleep(700 * time.Millisecond)
-	Charprint("", "", "<bx> Feel free to change them by running {bx defaults}.")
-	time.Sleep(700 * time.Millisecond)
-	fmt.Println(" ")
+
+	printsWhenDone := []string{
+		"Folder created.",
+		"Configured defaults.", //           color the command?
+		"Feel free to change them by running {bx defaults}."}
+
+	for confirmString := range printsWhenDone {
+		Charprint("kinda slow", prompt, printsWhenDone[confirmString])
+		time.Sleep(700 * time.Millisecond)
+	}
+	fmt.Println(" ") //buffer
 }
 
 func writeDefaults(prompt string, confPath string) {
 
-	outbound := []byte("default_prompt = " + prompt +
-		"\n" + "default_todo_symbol = ○")
+	outbound := []byte(
+		"default_todo_symbol = ○" +
+			"\n" + "default_prompt = " + prompt)
+
 	os.WriteFile(confPath, outbound, 0644)
 
-	basePath := Transformer("homedir")
+	basePath := ArgCleaner("homedir")
 
 	files := []string{
 		"one_time_reminders.txt",

@@ -8,12 +8,12 @@ import (
 func Parser(txt string, splitter string, search string) string {
 
 	txt = strings.TrimSpace(txt)
-	spl := strings.Split(txt, "\n")
+	splitNewlines := strings.Split(txt, "\n")
 	find := ""
 
-	for i := range spl {
+	for i := range splitNewlines {
 
-		sor := strings.Split(spl[i], splitter)
+		sor := strings.Split(splitNewlines[i], splitter)
 		sor[0] = strings.TrimSpace(sor[0])
 		sor[1] = strings.TrimSpace(sor[1])
 
