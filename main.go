@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -68,30 +71,87 @@ func eval(args []string) {
 	case "add":
 		fmt.Println("plop")
 	}
+	fmt.Println(args)
 }
 
+// All below are for Main()'s input cleansing.
+// All specific logic is elsewhere, in utils or exported funcs
+
+////////////
 func prompt(i int) string {
 
 	tmp := ""
+	msg := "options for "
 	if i == 0 { // verb was missing
+		Charprint("nil", ">! ", string(msg+"bx's verbs"))
 		tmp = verbsPrompt()
 
 	} else { // noun was missing
+		Charprint("nil", ">! ", string(msg+"bx's nouns"))
 		tmp = nounsPrompt()
 	}
+
 	return tmp
 }
 
 func verbsPrompt() string {
-
+	opts := []string{
+		"add",
+		"edit",
+		"list",
+		"remove"}
 	tmp := ""
-
-	return tmp
+	printsOptions(opts)
+	tmp = handleOptionsInput()
+	return optionsChecks(tmp, opts)
 }
 
 func nounsPrompt() string {
-
+	opts := []string{
+		"onetime",
+		"alias",
+		"event",
+		"idea",
+		"recurrent",
+		"todo",
+		"wishlist"}
 	tmp := ""
+	printsOptions(opts)
+	tmp = handleOptionsInput()
+	return optionsChecks(tmp, opts)
+}
 
+func printsOptions(opts []string) {
+	for i := range opts {
+		Charprint("nil", "> ", string(
+			fmt.Sprint(i+1)+ //index
+				". "+ // "1. remove" etc
+				string(opts[i])))
+	}
+}
+
+func handleOptionsInput() string { // only takes/rds string
+	nex, _, e := bufio.NewReader(os.Stdin).ReadLine()
+	for e != nil {
+		fmt.Println(e)
+	}
+	return string(nex)
+}
+
+func optionsChecks(tmp string, opts []string) string {
+
+	// try to convert str to int opt 1st
+	opt, e := strconv.Atoi(tmp)
+	if e != nil {
+		tmp = ArgCleaner(tmp) // clean again
+
+	} else if 0 < opt && opt <= len(opts) {
+		tmp = opts[opt-1] // i - 1, index
+
+	} else {
+		Charprint("red", "!!", "wrong int inputs")
+	}
+
+	fmt.Println("tmp is " + tmp)
 	return tmp
 }

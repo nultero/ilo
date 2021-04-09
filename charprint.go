@@ -46,7 +46,7 @@ func Charprint(modifier string, prompt string, output string) {
 	normalizedSpeed := math.Log(float64(len(output)))
 
 	speed -= int((normalizedSpeed - 1) * 4)
-	fmt.Printf("\n speed is: %v \n", speed)
+	// fmt.Printf("\n speed is: %v \n", speed)
 
 	if speed <= 0 {
 		fmt.Printf(wrapString, prompt, output)
