@@ -1,37 +1,40 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
 // multiple kinds of args
 
-// verb == priority 1, i.e., add, remove, edit, etc.
+// verb == high priority, i.e., add, remove, edit, etc.
 // can't be multiple verbs, toss error if true
-// noun == priority 2, i.e., reminder, cron, etc
-// modifier == p 3
+// noun == low priority, i.e., reminder, cron, etc
+// modifier == lowest priority
 
 func ArgumentPrioritizer(args []string) []string {
 
 	verbNums, nounNums := 0, 0
-	// all args being checked should already be cleaned via ArgCleaner()
+
+	// only ever gonna be size 2, a verb & noun
+	var sortedArgs = make([]string, 2)
+
 	for i := range args {
 		if verbs(args[i]) {
+			sortedArgs[0] = args[i]
 			verbNums++
 		} else if nouns(args[i]) {
+			sortedArgs[1] = args[i]
 			nounNums++
 		}
 	}
 
 	// limited to only 1 of each
 	if verbNums > 1 || nounNums > 1 {
-		// display what was wrong
-		fmt.Printf("%v - verbs, %v - nouns \n", verbNums, nounNums)
+		// display what was wrong, sort of crappy err logging
 		bootBackToTerminal(verbNums)
 	}
 
-	return args
+	return sortedArgs
 }
 
 func verbs(match string) bool {
@@ -62,14 +65,19 @@ func nouns(match string) bool {
 func bootBackToTerminal(faultReason int) {
 
 	fault := "bx's "
+	infoStr := "fault: bx can only evaluate one "
 	if faultReason > 1 {
 		fault += "verb"
+		infoStr += "verb"
+
 	} else {
 		fault += "noun"
+		infoStr += "noun"
 	}
 	fault += " args have been overloaded"
+	infoStr += " at a time"
 
 	Charprint("red", "<!>", fault)
-	Charprint("blue", "<!>", "remember: bx can only do one command at a time")
+	Charprint("blue", "<!>", infoStr)
 	os.Exit(0)
 }

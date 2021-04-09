@@ -5,28 +5,66 @@ import (
 	"strings"
 )
 
-// Transform cleans up inter-function and CLI args & paths,
-// these are the canonical function params --
-// "why use lot word few word trick"
-// this is more for passing in lazy/tired CLI arguments than for source
+// pass in a single string, break apart and
+// clean if multiple words
+// else just return the clean version
+//
+// makes it possible to use ultralazy
+// arguments for when tired
 func ArgCleaner(arg string) string {
 
-	//might be cleaner with autocompletes
-	//cleaner to just pass in the whole args array
+	if len(strings.Split(arg, " ")) == 1 {
+		arg = canonicals(arg)
+
+	} else { // more than 1 arg, then this
+		// rips and cleans words individually
+
+		args := []string(strings.Split(arg, " "))
+		for i := range args {
+			args[i] = canonicals(args[i])
+		}
+
+		arg = ""
+		for i := range args {
+			arg += canonicals(args[i])
+		}
+	}
+
+	return arg
+}
+
+func canonicals(arg string) string {
 
 	switch arg {
 
-	case "1", "o", "on", "ot", "one":
-		arg = "onetime"
+	//dir levels
+	case "homedir":
+		path, _ := os.UserHomeDir()
+		arg = path + "/.config/tailbox/"
 
+	// verbs
 	case "a", "ad", "dad", "dd":
 		arg = "add"
 
-	case "al", "as", "als", "asl", "ali":
-		arg = "alias"
-
 	case "ed", "edi", "edt":
 		arg = "edit"
+
+	case "h", "he", "hel", "halp", "man": // special case?
+		arg = "help"
+
+	case "l", "ll", "ls", "lst", "lsa", "read", "rd":
+		arg = "list"
+
+	case "rmn", "rem", "rm", "rmv", "rv":
+		arg = "remove"
+	/////////////////
+
+	// nouns
+	case "1", "o", "on", "ot", "one":
+		arg = "onetime"
+
+	case "al", "as", "als", "asl", "ali":
+		arg = "alias"
 
 	case "ev", "evt", "eve", "evn", "events":
 		arg = "event"
@@ -34,20 +72,8 @@ func ArgCleaner(arg string) string {
 	case "i", "di", "id", "ida", "ide":
 		arg = "idea"
 
-	case "h", "he", "hel", "halp", "man":
-		arg = "help"
-
-	case "l", "ll", "ls", "lst", "lsa", "read", "rd":
-		arg = "list"
-
 	case "rc", "rer", "rr", "rec", "recr":
 		arg = "recurrent"
-
-	case "rmn", "rem", "rm", "rmv", "rv":
-		arg = "remove"
-
-	case "sd", "sod":
-		arg = "sad"
 
 	case "td", "tod", "todos":
 		arg = "todo"
@@ -55,55 +81,21 @@ func ArgCleaner(arg string) string {
 	case "wl", "ws", "wsl", "wsh", "wish":
 		arg = "wishlist"
 
-	// special case for pulling config
-	case "homedir",
-		"homedir cf",
-		"homedir conf",
-		"homedir config",
-		"cf",
-		"conf",
-		"config":
-		arg = path(arg)
+	// context
+	case "cf", "conf", "config":
+		arg = "config.txt"
 
-	}
+	case "rectxt":
+		arg = "recurrent_reminders.txt"
+
+	case "onetxt":
+		arg = "one_time_reminders.txt"
+
+	case "todotxt":
+		arg = "todos.txt"
+		/////////////////
+
+	} /////////////////
 
 	return arg
-}
-
-func path(arg string) string {
-
-	translatedArg := ""
-
-	spl := strings.Split(arg, " ")
-	splitLength := len(spl)
-
-	if splitLength >= 1 {
-
-		if spl[0] == "homedir" {
-			path, _ := os.UserHomeDir()
-			path += "/.config/tailbox/"
-			translatedArg += path
-		}
-
-		if splitLength > 1 {
-			arg = spl[1]
-		}
-
-	}
-
-	switch arg {
-	case "cf", "conf", "config":
-		translatedArg += "config.txt"
-
-	case "r", "rc", "rec", "recurrent":
-		translatedArg += "recurrent_rmds.txt"
-
-	case "o", "on", "one", "one time", "1":
-		translatedArg += "one_time_rmds.txt"
-
-	case "td", "tod", "todo", "todos":
-		translatedArg += "todos.txt"
-	}
-
-	return translatedArg
 }

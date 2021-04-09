@@ -33,8 +33,6 @@ func Charprint(modifier string, prompt string, output string) {
 
 	case "instant":
 		speed = 0
-
-	case "nil":
 	}
 	wrapString = "\r" + wrapString
 
@@ -47,13 +45,13 @@ func Charprint(modifier string, prompt string, output string) {
 	//logscale print reduction?
 	normalizedSpeed := math.Log(float64(len(output)))
 
-	speed -= int((normalizedSpeed - 3) * 5)
+	speed -= int((normalizedSpeed - 1) * 4)
 	fmt.Printf("\n speed is: %v \n", speed)
+
 	if speed <= 0 {
 		fmt.Printf(wrapString, prompt, output)
 
 	} else {
-
 		for i := range output {
 			subString += string(output[i])
 			fmt.Printf(wrapString, prompt, subString)

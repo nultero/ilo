@@ -36,12 +36,8 @@ func main() {
 	configs := ConfigureStuff(ArgCleaner("homedir conf"))
 	prompt := string(Parser(configs, "=", "default_prompt") + " ")
 
-	//
-	// pass the whole arg list to the cleaner function instead of this iterating
-	//
-
 	if len(flag.Args()) == 0 { // bx will only check stuff if called passively
-
+		//                        i.e., any args will bypass these checks
 		now := time.Now()
 		formattedTime := now.Format("02 Mon")
 		month := TrimMonth(now.Month().String())
@@ -53,11 +49,49 @@ func main() {
 
 		for arg := range flag.Args() {
 			flag.Args()[arg] = ArgCleaner(flag.Args()[arg])
-			// fmt.Println(arg)
 		}
-		ArgumentPrioritizer(flag.Args())
-		// fmt.Println(flag.Args())
 
+		sortedArgs := ArgumentPrioritizer(flag.Args())
+		eval(sortedArgs)
+	}
+}
+
+func eval(args []string) {
+
+	for i := 0; i < len(args); i++ { // prompts
+		if args[i] == "" {
+			args[i] = prompt(i)
+		}
 	}
 
+	switch args[0] { // final args are digested into eval
+	case "add":
+		fmt.Println("plop")
+	}
+}
+
+func prompt(i int) string {
+
+	tmp := ""
+	if i == 0 { // verb was missing
+		tmp = verbsPrompt()
+
+	} else { // noun was missing
+		tmp = nounsPrompt()
+	}
+	return tmp
+}
+
+func verbsPrompt() string {
+
+	tmp := ""
+
+	return tmp
+}
+
+func nounsPrompt() string {
+
+	tmp := ""
+
+	return tmp
 }

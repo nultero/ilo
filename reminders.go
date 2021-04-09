@@ -37,11 +37,9 @@ func TrimMonth(month string) string {
 }
 func checkRecurrents() {
 
-	reminderRead, _ := os.ReadFile(ArgCleaner("homedir recurrent"))
+	reminderRead, _ := os.ReadFile(ArgCleaner("homedir rectxt"))
 	recurrents := string(reminderRead)
 
-	// nope, going to pass in whole arg list when I get back to fixing this
-	fmt.Println(ArgCleaner("homedir recurrent"))
 	fmt.Println(recurrents)
 
 }
