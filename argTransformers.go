@@ -5,12 +5,10 @@ import (
 	"strings"
 )
 
-// pass in a single string, break apart and
-// clean if multiple words
-// else just return the clean version
-//
-// makes it possible to use ultralazy
-// arguments for when tired
+// Primarily expands args like 'rm' into 'remove',
+// aliases others to closest equivalent, and splits
+// 'homedir' into $home for tailbox's inner-funcs.
+// ('homedir' in the CLI itself will be ignored)
 func ArgCleaner(arg string) string {
 
 	if len(strings.Split(arg, " ")) == 1 {
@@ -84,16 +82,6 @@ func canonicals(arg string) string {
 	// context
 	case "cf", "conf", "config":
 		arg = "config.txt"
-
-	case "rectxt":
-		arg = "recurrent_reminders.txt"
-
-	case "onetxt":
-		arg = "one_time_reminders.txt"
-
-	case "todotxt":
-		arg = "todos.txt"
-		/////////////////
 
 	} /////////////////
 

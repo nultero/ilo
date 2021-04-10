@@ -11,6 +11,9 @@ import (
 // noun == low priority, i.e., reminder, cron, etc
 // modifier == lowest priority
 
+// Matches arguments to verbs / nouns, checks for validity of both,
+// and sorts them so that even if put in backwards, the args are all
+// functionally equivalent.
 func ArgumentPrioritizer(args []string) []string {
 
 	verbNums, nounNums := 0, 0

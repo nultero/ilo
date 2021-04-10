@@ -51,6 +51,7 @@ func main() {
 	} else {
 
 		for arg := range flag.Args() {
+			// i.e., 'rm' returns 'remove' from Cleaner()
 			flag.Args()[arg] = ArgCleaner(flag.Args()[arg])
 		}
 
@@ -69,11 +70,24 @@ func eval(args []string) {
 
 	switch args[0] { // final args are digested into eval
 	case "add":
-		fmt.Println("plop")
+		Add(args[1])
+	case "edit":
+		fmt.Println("editing thing")
+	case "list":
+		fmt.Println("listing thing")
+	case "remove":
+		fmt.Println("removing thing")
 	}
-	fmt.Println(args)
 }
 
+///   ||||            |   |                 |  |  |
+///   |               |   |                    | |
+///   ||    ||||   ||||   |     ||||  ||||  |  ||
+///   |     ||  |  |  |   |     |  |  |  |  |  | |
+///   ||||  ||  |  ||||   ||||  ||||  ||||  |  |  |
+///										 |
+///										||
+//
 // All below are for Main()'s input cleansing.
 // All specific logic is elsewhere, in utils or exported funcs
 
@@ -102,7 +116,7 @@ func verbsPrompt() string {
 		"remove"}
 	tmp := ""
 	printsOptions(opts)
-	tmp = handleOptionsInput()
+	tmp = HandleOptionsInput()
 	return optionsChecks(tmp, opts)
 }
 
@@ -117,7 +131,7 @@ func nounsPrompt() string {
 		"wishlist"}
 	tmp := ""
 	printsOptions(opts)
-	tmp = handleOptionsInput()
+	tmp = HandleOptionsInput()
 	return optionsChecks(tmp, opts)
 }
 
@@ -130,7 +144,9 @@ func printsOptions(opts []string) {
 	}
 }
 
-func handleOptionsInput() string { // only takes/rds string
+// Exports a string that is unchecked against any args.
+// Pass to a separate function to map cleaner args in passthrough.
+func HandleOptionsInput() string { // only takes/rds string
 	nex, _, e := bufio.NewReader(os.Stdin).ReadLine()
 	for e != nil {
 		fmt.Println(e)
@@ -142,9 +158,12 @@ func optionsChecks(tmp string, opts []string) string {
 
 	// try to convert str to int opt 1st
 	opt, e := strconv.Atoi(tmp)
+
+	// string input
 	if e != nil {
 		tmp = ArgCleaner(tmp) // clean again
 
+		///	// int input
 	} else if 0 < opt && opt <= len(opts) {
 		tmp = opts[opt-1] // i - 1, index
 
@@ -152,6 +171,5 @@ func optionsChecks(tmp string, opts []string) string {
 		Charprint("red", "!!", "wrong int inputs")
 	}
 
-	fmt.Println("tmp is " + tmp)
 	return tmp
 }
