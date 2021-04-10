@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Config is for prompts, controlling Charprint colors, and what/when types print
+// Config is for prompts, controlling fmt.Println colors, and what/when types print
 // function itself just inits / grabs those
 func ConfigureStuff(confPath string) string {
 
@@ -30,8 +30,8 @@ func ConfigureStuff(confPath string) string {
 
 func confNotFound(confPath string, prompt string) {
 
-	Charprint("red", "<bx>", "No config file found.")
-	Charprint("", "<bx>", "Default config path is: "+confPath)
+	fmt.Println("<bx>", "No config file found.")
+	fmt.Println("<bx>", "Default config path is: "+confPath)
 	fmt.Printf(" %s Create new config? (y | n)"+"\t\n(bx will just exit if not 'y') : ", prompt)
 
 	if grabInput() == "y" {
@@ -39,7 +39,7 @@ func confNotFound(confPath string, prompt string) {
 		os.Mkdir(ArgCleaner("homedir"), 0755)
 
 	} else { // this is if manually exited
-		Charprint("", prompt, "sure thing, pardner")
+		fmt.Println(prompt, "sure thing, pardner")
 		os.Exit(0)
 	}
 }
@@ -61,7 +61,7 @@ func configsOutro(prompt string) {
 		"Feel free to change them by running {bx defaults}."}
 
 	for confirmString := range printsWhenDone {
-		Charprint("kinda slow", prompt, printsWhenDone[confirmString])
+		fmt.Println(prompt, printsWhenDone[confirmString])
 		time.Sleep(700 * time.Millisecond)
 	}
 	fmt.Println(" ") //buffer
@@ -85,7 +85,7 @@ func writeDefaults(prompt string, confPath string) {
 
 	for index, file := range files {
 		frmt := fmt.Sprint(index+1) + " > Creating " + file + " in " + basePath
-		Charprint("instant", "<bx>", frmt)
+		fmt.Println("<bx>", frmt)
 		fmt.Println(" ")
 		os.WriteFile(
 			(basePath + file), []byte(""), 0644)

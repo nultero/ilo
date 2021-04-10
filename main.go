@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,6 +34,11 @@ import (
 // -dir flag for pwd on bx's $home
 // -h flag for forgetting all cmds
 
+//  ||
+//  |||||  ||  ||
+//  || ||    ||
+//  |||||  ||  ||
+
 func main() {
 
 	flag.Parse()
@@ -56,27 +62,31 @@ func main() {
 		}
 
 		sortedArgs := ArgumentPrioritizer(flag.Args())
-		eval(sortedArgs)
+		eval(sortedArgs, prompt)
 	}
 }
 
-func eval(args []string) {
+func eval(args []string, promptstr string) {
 
-	for i := 0; i < len(args); i++ { // prompts
-		if args[i] == "" {
-			args[i] = prompt(i)
+	if args[0] != "test" && args[0] != "help" {
+		for i := 0; i < len(args); i++ { // prompts
+			if args[i] == "" {
+				args[i] = prompt(i, promptstr)
+			}
 		}
 	}
 
 	switch args[0] { // final args are digested into eval
 	case "add":
-		Add(args[1])
+		Add(args[1], promptstr)
 	case "edit":
 		fmt.Println("editing thing")
 	case "list":
-		fmt.Println("listing thing")
+		List(args[1])
 	case "remove":
 		fmt.Println("removing thing")
+	case "test":
+		Test()
 	}
 }
 
@@ -92,35 +102,40 @@ func eval(args []string) {
 // All specific logic is elsewhere, in utils or exported funcs
 
 ////////////
-func prompt(i int) string {
+func prompt(i int, promptstr string) string {
 
 	tmp := ""
 	msg := "options for "
+	delimitr := strings.Repeat("-", 15)
 	if i == 0 { // verb was missing
-		Charprint("nil", ">! ", string(msg+"bx's verbs"))
-		tmp = verbsPrompt()
+		fmt.Println(">! ", string(msg+"bx's verbs"))
+		fmt.Println(">", delimitr)
+		tmp = verbsPrompt(promptstr)
 
 	} else { // noun was missing
-		Charprint("nil", ">! ", string(msg+"bx's nouns"))
-		tmp = nounsPrompt()
+		fmt.Println(">! ", string(msg+"bx's nouns"))
+		fmt.Println(">", delimitr)
+		tmp = nounsPrompt(promptstr)
 	}
 
 	return tmp
 }
 
-func verbsPrompt() string {
+func verbsPrompt(promptstr string) string {
 	opts := []string{
 		"add",
 		"edit",
 		"list",
+		"help",
+		"test",
 		"remove"}
 	tmp := ""
 	printsOptions(opts)
-	tmp = HandleOptionsInput()
+	tmp = HandleOptionsInput(promptstr)
 	return optionsChecks(tmp, opts)
 }
 
-func nounsPrompt() string {
+func nounsPrompt(promptstr string) string {
 	opts := []string{
 		"onetime",
 		"alias",
@@ -131,13 +146,13 @@ func nounsPrompt() string {
 		"wishlist"}
 	tmp := ""
 	printsOptions(opts)
-	tmp = HandleOptionsInput()
+	tmp = HandleOptionsInput(promptstr)
 	return optionsChecks(tmp, opts)
 }
 
 func printsOptions(opts []string) {
 	for i := range opts {
-		Charprint("nil", "> ", string(
+		fmt.Println(">", string(
 			fmt.Sprint(i+1)+ //index
 				". "+ // "1. remove" etc
 				string(opts[i])))
@@ -146,8 +161,11 @@ func printsOptions(opts []string) {
 
 // Exports a string that is unchecked against any args.
 // Pass to a separate function to map cleaner args in passthrough.
-func HandleOptionsInput() string { // only takes/rds string
-	nex, _, e := bufio.NewReader(os.Stdin).ReadLine()
+func HandleOptionsInput(promptstr string) string { // only takes/rds string
+
+	fmt.Print(promptstr + " ")
+	nex, e := bufio.NewReader(os.Stdin).ReadString('\n')
+	fmt.Print(nex)
 	for e != nil {
 		fmt.Println(e)
 	}
@@ -168,7 +186,7 @@ func optionsChecks(tmp string, opts []string) string {
 		tmp = opts[opt-1] // i - 1, index
 
 	} else {
-		Charprint("red", "!!", "wrong int inputs")
+		fmt.Println("!!", "wrong int inputs")
 	}
 
 	return tmp

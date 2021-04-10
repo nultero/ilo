@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 )
 
@@ -45,6 +46,8 @@ func verbs(match string) bool {
 	case "add",
 		"edit",
 		"list",
+		"help",
+		"test",
 		"remove":
 		return true
 	}
@@ -80,7 +83,7 @@ func bootBackToTerminal(faultReason int) {
 	fault += " args have been overloaded"
 	infoStr += " at a time"
 
-	Charprint("red", "<!>", fault)
-	Charprint("blue", "<!>", infoStr)
+	fmt.Println("<!>", fault)
+	fmt.Println("<!>", infoStr)
 	os.Exit(0)
 }
