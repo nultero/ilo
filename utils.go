@@ -74,9 +74,7 @@ func Add(typeOf string, promptstr string) {
 // Lists contents of argpath. What it says on the tin.
 func List(typeOf string) {
 	typeOf = txtFileNamer(typeOf)
-	fmt.Println(typeOf + " > test")
 	readPath := ArgCleaner("homedir") + typeOf
-	fmt.Println(readPath + " > test")
 	conts, _ := os.ReadFile(readPath)
 	fmt.Println(string(conts))
 }

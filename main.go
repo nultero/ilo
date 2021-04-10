@@ -162,10 +162,8 @@ func printsOptions(opts []string) {
 // Exports a string that is unchecked against any args.
 // Pass to a separate function to map cleaner args in passthrough.
 func HandleOptionsInput(promptstr string) string { // only takes/rds string
-
 	fmt.Print(promptstr + " ")
-	nex, e := bufio.NewReader(os.Stdin).ReadString('\n')
-	fmt.Print(nex)
+	nex, _, e := bufio.NewReader(os.Stdin).ReadLine()
 	for e != nil {
 		fmt.Println(e)
 	}
