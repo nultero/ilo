@@ -1,13 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
-	"os"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/manifoldco/promptui"
 )
 
 //
@@ -71,7 +70,7 @@ func eval(args []string, promptstr string) {
 	if args[0] != "test" && args[0] != "help" {
 		for i := 0; i < len(args); i++ { // prompts
 			if args[i] == "" {
-				args[i] = prompt(i, promptstr)
+				args[i] = prompt(i)
 			}
 		}
 	}
@@ -80,11 +79,11 @@ func eval(args []string, promptstr string) {
 	case "add":
 		Add(args[1], promptstr)
 	case "edit":
-		fmt.Println("editing thing")
+		Edit(args[1], promptstr)
 	case "list":
 		List(args[1])
 	case "remove":
-		fmt.Println("removing thing")
+		Remove(args[1])
 	case "test":
 		Test()
 	}
@@ -102,19 +101,18 @@ func eval(args []string, promptstr string) {
 // All specific logic is elsewhere, in utils or exported funcs
 
 ////////////
-func prompt(i int, promptstr string) string {
+func prompt(i int) string {
 
 	tmp := ""
 	msg := "options for "
-	delimitr := strings.Repeat("-", 15)
+	fmt.Println(">", strings.Repeat("-", 15))
+
 	if i == 0 { // verb was missing
-		fmt.Println(">! ", string(msg+"bx's verbs"))
-		fmt.Println(">", delimitr)
+		promptstr := "> " + string(msg+"bx's verbs")
 		tmp = verbsPrompt(promptstr)
 
 	} else { // noun was missing
-		fmt.Println(">! ", string(msg+"bx's nouns"))
-		fmt.Println(">", delimitr)
+		promptstr := "> " + string(msg+"bx's nouns")
 		tmp = nounsPrompt(promptstr)
 	}
 
@@ -129,10 +127,8 @@ func verbsPrompt(promptstr string) string {
 		"help",
 		"test",
 		"remove"}
-	tmp := ""
-	printsOptions(opts)
-	tmp = HandleOptionsInput(promptstr)
-	return optionsChecks(tmp, opts)
+
+	return HandlesOpts(TinyArray(promptstr), opts)
 }
 
 func nounsPrompt(promptstr string) string {
@@ -144,47 +140,21 @@ func nounsPrompt(promptstr string) string {
 		"recurrent",
 		"todo",
 		"wishlist"}
-	tmp := ""
-	printsOptions(opts)
-	tmp = HandleOptionsInput(promptstr)
-	return optionsChecks(tmp, opts)
+
+	return HandlesOpts(TinyArray(promptstr), opts)
 }
 
-func printsOptions(opts []string) {
-	for i := range opts {
-		fmt.Println(">", string(
-			fmt.Sprint(i+1)+ //index
-				". "+ // "1. remove" etc
-				string(opts[i])))
+func HandlesOpts(promptstr, opts []string) string {
+
+	prompt := promptui.Select{
+		Label: promptstr[0],
+		Items: opts,
 	}
-}
 
-// Exports a string that is unchecked against any args.
-// Pass to a separate function to map cleaner args in passthrough.
-func HandleOptionsInput(promptstr string) string { // only takes/rds string
-	fmt.Print(promptstr + " ")
-	nex, _, e := bufio.NewReader(os.Stdin).ReadLine()
-	for e != nil {
-		fmt.Println(e)
-	}
-	return string(nex)
-}
+	_, tmp, err := prompt.Run()
 
-func optionsChecks(tmp string, opts []string) string {
-
-	// try to convert str to int opt 1st
-	opt, e := strconv.Atoi(tmp)
-
-	// string input
-	if e != nil {
-		tmp = ArgCleaner(tmp) // clean again
-
-		///	// int input
-	} else if 0 < opt && opt <= len(opts) {
-		tmp = opts[opt-1] // i - 1, index
-
-	} else {
-		fmt.Println("!!", "wrong int inputs")
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
 	}
 
 	return tmp

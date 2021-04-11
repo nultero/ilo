@@ -13,7 +13,7 @@ import (
 func CheckReminders(now time.Time) {
 
 	// fmt.Println(Months[TrimMonth(now.Month().String())])
-	checkRecurrents()
+	// checkRecurrents()
 
 }
 
