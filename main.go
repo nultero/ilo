@@ -26,7 +26,6 @@ import (
 //
 //   ^ all should be fairly transparent from outside tailbox, in native formats or plaintext
 //
-// * AUTOCOMPLETES IN CONFIG
 // * use last confirm to tidy up dotfile migration
 //
 // change default directory
@@ -51,7 +50,7 @@ func main() {
 		month := TrimMonth(now.Month().String())
 		fmt.Println(prompt, month, formattedTime)
 
-		CheckReminders(now)
+		// CheckReminders(now, month)
 
 	} else {
 

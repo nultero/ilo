@@ -48,14 +48,14 @@ func txtFileNamer(location string) string {
 }
 
 //Tacks home directory onto paths to .txts.
-func txtPath(typeOf string) string {
+func TxtPath(typeOf string) string {
 	return ArgCleaner("homedir") + txtFileNamer(typeOf)
 }
 
 // Master function for .txt controls.
 // End result is a full string read from a file in bx's $path.
 func contents(typeOf string) string {
-	conts, _ := os.ReadFile(txtPath(typeOf))
+	conts, _ := os.ReadFile(TxtPath(typeOf))
 	return string(conts)
 }
 
@@ -73,7 +73,7 @@ func Add(typeOf string, promptstr string) {
 	// still needs stuff like for DateTimes and whatnot
 	// based on typeOf
 	//
-	os.WriteFile(txtPath(typeOf), []byte(dat), 0644)
+	os.WriteFile(TxtPath(typeOf), []byte(dat), 0644)
 	Done()
 }
 
@@ -156,7 +156,7 @@ func writeOut(typeOf string, opts []string) {
 		finalStr += opts[i] + "\n"
 	}
 	finalStr = finalStr[:len(finalStr)-1] // cuts off last newline
-	os.WriteFile(txtPath(typeOf), []byte(finalStr), 0644)
+	os.WriteFile(TxtPath(typeOf), []byte(finalStr), 0644)
 	Done()
 }
 
