@@ -71,7 +71,8 @@ func writeDefaults(prompt string, confPath string) {
 
 	outbound := []byte(
 		"default_todo_symbol = ○" +
-			"\n" + "default_prompt = " + prompt)
+			"\n" + "default_prompt = " + prompt +
+			"\n" + "default_days_check = 3")
 
 	os.WriteFile(confPath, outbound, 0644)
 

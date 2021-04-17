@@ -50,7 +50,8 @@ func main() {
 		month := TrimMonth(now.Month().String())
 		fmt.Println(prompt, month, formattedTime)
 
-		// CheckReminders(now, month)
+		daysOut := string(Parser(configs, "=", "default_days_check"))
+		CheckReminders(now, month, daysOut)
 
 	} else {
 
