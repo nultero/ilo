@@ -83,6 +83,9 @@ func canonicals(arg string) string {
 	case "cf", "conf", "config":
 		arg = "config.txt"
 
+	case "check":
+		arg = "bx_checks.txt"
+
 	} /////////////////
 
 	return arg

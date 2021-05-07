@@ -19,6 +19,8 @@ import (
 //   recurrent_rmds.txt
 //   todos.txt
 //   /
+//	 >> export and import data for when you mess up
+//   /
 //   aliases.txt <-- later
 //   kinds of aliases: nav, helpers, formats, shorteners, tooling, funcs
 //   kinds of crons: server side, home side, emb for embed? / pi
@@ -46,12 +48,13 @@ func main() {
 	if len(flag.Args()) == 0 { // bx will only check stuff if called passively
 		//                        i.e., any args will bypass these checks
 		now := time.Now()
-		formattedTime := now.Format("02 Mon")
+		todaysFormatDate := now.Format("02 Mon")
 		month := TrimMonth(now.Month().String())
-		fmt.Println(prompt, month, formattedTime)
+		fmt.Println(prompt, month, todaysFormatDate)
 
+		lastDayChecked := string(Parser(configs, "=", "bx last checked"))
 		daysOut := string(Parser(configs, "=", "default_days_check"))
-		CheckReminders(now, month, daysOut)
+		CheckReminders(now, month, daysOut, lastDayChecked)
 
 	} else {
 

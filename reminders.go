@@ -12,12 +12,20 @@ import (
 //    -- check list :
 //    -- one time reminders
 //    -- recurrent stuff
-func CheckReminders(now time.Time, month string, daysOut string) {
+func CheckReminders(now time.Time, month string, daysOut string, lastDayChecked string) {
 
-	// fmt.Println(Months[TrimMonth(now.Month().String())])
+	tdysFmt := now.Format("02 Mon")
 
-	nDays, _ := strconv.Atoi(daysOut)
-	checkRecurrents(now, month, nDays)
+	if todayHasNotBeenChecked(tdysFmt) {
+
+		nDays, _ := strconv.Atoi(daysOut)
+		checkRecurrents(now, nDays)
+		// checkOneTimes(now, month, nDays)
+		writeCheckedDay(tdysFmt)
+
+	} else {
+		fmt.Println("else on the check")
+	}
 
 }
 
@@ -39,7 +47,17 @@ var Months = map[string]int{
 func TrimMonth(month string) string {
 	return month[0:3]
 }
-func checkRecurrents(now time.Time, month string, daysOut int) {
+
+// flack  "\033[1;30m%s\033[0m"
+// zed    "\033[1;31m%s\033[0m"
+// lreen  "\033[1;32m%s\033[0m"
+// bellow "\033[1;33m%s\033[0m"
+// yurple "\033[1;34m%s\033[0m"
+// bagenta"\033[1;35m%s\033[0m"
+// peal   "\033[1;36m%s\033[0m"
+// khite  "\033[1;37m%s\033[0m"
+
+func checkRecurrents(now time.Time, daysOut int) {
 
 	reminderRead, _ := os.ReadFile(TxtPath("recurrent"))
 	recurrents := string(reminderRead)
@@ -59,14 +77,17 @@ func checkRecurrents(now time.Time, month string, daysOut int) {
 			if er == nil {
 
 				daysWithin := checkDay - today
+
 				if daysWithin >= 0 && daysWithin <= daysOut {
 
 					formatStr := " >> "
 					switch daysWithin {
 					case 0:
-						formatStr += "today"
+						formatStr += "\033[1;31m" + "today" + "\033[0m"
+
 					case 1:
 						formatStr += "1 day"
+
 					default:
 						formatStr += fmt.Sprintf("%v days", daysWithin)
 					}
@@ -77,4 +98,26 @@ func checkRecurrents(now time.Time, month string, daysOut int) {
 			}
 		}
 	}
+}
+
+func readInternals() []string {
+	lastData, _ := os.ReadFile(
+		ArgCleaner("homedir check"),
+	)
+	return strings.Split(string(lastData), "\n")
+}
+
+func todayHasNotBeenChecked(today string) bool {
+	lastDay := readInternals()[0]
+	if lastDay == today {
+		return false
+	} else {
+		return true
+	}
+}
+
+func writeCheckedDay(now string) {
+
+	fmt.Println(now)
+
 }

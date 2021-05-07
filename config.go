@@ -79,6 +79,7 @@ func writeDefaults(prompt string, confPath string) {
 	basePath := ArgCleaner("homedir")
 
 	files := []string{
+		"bx_checks.txt",
 		"one_time_reminders.txt",
 		"recurrent_reminders.txt",
 		"todos.txt",
@@ -87,7 +88,6 @@ func writeDefaults(prompt string, confPath string) {
 	for index, file := range files {
 		frmt := fmt.Sprint(index+1) + " > Creating " + file + " in " + basePath
 		fmt.Println("<bx>", frmt)
-		fmt.Println(" ")
 		os.WriteFile(
 			(basePath + file), []byte(""), 0644)
 	}
