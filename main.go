@@ -52,9 +52,8 @@ func main() {
 		month := TrimMonth(now.Month().String())
 		fmt.Println(prompt, month, todaysFormatDate)
 
-		lastDayChecked := string(Parser(configs, "=", "bx last checked"))
 		daysOut := string(Parser(configs, "=", "default_days_check"))
-		CheckReminders(now, month, daysOut, lastDayChecked)
+		CheckReminders(now, month, daysOut)
 
 	} else {
 

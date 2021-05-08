@@ -12,21 +12,39 @@ import (
 //    -- check list :
 //    -- one time reminders
 //    -- recurrent stuff
-func CheckReminders(now time.Time, month string, daysOut string, lastDayChecked string) {
+func CheckReminders(now time.Time, month string, daysOut string) {
 
 	tdysFmt := now.Format("02 Mon")
 
 	if todayHasNotBeenChecked(tdysFmt) {
 
-		nDays, _ := strconv.Atoi(daysOut)
-		checkRecurrents(now, nDays)
+		intDays, _ := strconv.Atoi(daysOut)
+		recs := checkRecurrents(now, intDays)
+		printall(recs)
+
 		// checkOneTimes(now, month, nDays)
-		writeCheckedDay(tdysFmt)
+
+		writeCheckedDay(tdysFmt, recs)
 
 	} else {
-		fmt.Println("else on the check")
-	}
+		ls, _ := os.ReadFile(
+			ArgCleaner("homedir check"),
+		)
 
+		spl := strings.Split(string(ls), "\n")
+		for i := 1; i < len(spl); i++ {
+			out := spl[i]
+			if len(out) > 2 {
+				fmt.Println(out)
+			}
+		}
+	}
+}
+
+func printall(data []string) {
+	for i := range data {
+		fmt.Println(data[i])
+	}
 }
 
 var Months = map[string]int{
@@ -57,13 +75,15 @@ func TrimMonth(month string) string {
 // peal   "\033[1;36m%s\033[0m"
 // khite  "\033[1;37m%s\033[0m"
 
-func checkRecurrents(now time.Time, daysOut int) {
+func checkRecurrents(now time.Time, daysOut int) []string {
 
 	reminderRead, _ := os.ReadFile(TxtPath("recurrent"))
 	recurrents := string(reminderRead)
 	recArray := strings.Split(recurrents, "\n")
 
 	today, _ := strconv.Atoi(now.Format("02"))
+
+	var targetStrings []string
 
 	for i := range recArray {
 		atSplt := strings.Split(recArray[i], "@")
@@ -92,12 +112,14 @@ func checkRecurrents(now time.Time, daysOut int) {
 						formatStr += fmt.Sprintf("%v days", daysWithin)
 					}
 
-					fmt.Println(strings.TrimSpace(atSplt[0]) + formatStr)
+					tmp := strings.TrimSpace(atSplt[0]) + formatStr
+					targetStrings = append(targetStrings, tmp)
 				}
-
 			}
 		}
 	}
+
+	return targetStrings
 }
 
 func readInternals() []string {
@@ -116,8 +138,17 @@ func todayHasNotBeenChecked(today string) bool {
 	}
 }
 
-func writeCheckedDay(now string) {
+func writeCheckedDay(now string, data []string) {
 
-	fmt.Println(now)
+	output := now + "\n"
 
+	for i := range data {
+		output += data[i] + "\n"
+	}
+
+	os.WriteFile(
+		ArgCleaner("homedir check"),
+		[]byte(output),
+		0644,
+	)
 }
