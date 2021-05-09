@@ -15,29 +15,24 @@ import (
 func CheckReminders(now time.Time, month string, daysOut string) {
 
 	tdysFmt := now.Format("02 Mon")
+	mn := now.Month().String()[0:3]
 
 	if todayHasNotBeenChecked(tdysFmt) {
 
 		intDays, _ := strconv.Atoi(daysOut)
-		recs := checkRecurrents(now, intDays)
+		intToday, _ := strconv.Atoi(now.Format("02"))
+
+		recs := checkRecurrents(intToday, intDays, mn)
 		printall(recs)
 
-		// checkOneTimes(now, month, nDays)
+		// ots := checkOneTimes(now, month, nDays)
 
 		writeCheckedDay(tdysFmt, recs)
 
 	} else {
-		ls, _ := os.ReadFile(
-			ArgCleaner("homedir check"),
-		)
-
-		spl := strings.Split(string(ls), "\n")
-		for i := 1; i < len(spl); i++ {
-			out := spl[i]
-			if len(out) > 2 {
-				fmt.Println(out)
-			}
-		}
+		// this is on the already-written file
+		// so skip the date line and just read content
+		printall(readInternals()[1:])
 	}
 }
 
@@ -47,79 +42,86 @@ func printall(data []string) {
 	}
 }
 
-var Months = map[string]int{
-	"jan": 31,
-	"feb": 28, // leaps too
-	"mar": 31,
-	"apr": 30,
-	"may": 31,
-	"jun": 30,
-	"jul": 31,
-	"aug": 31,
-	"sep": 30,
-	"oct": 31,
-	"nov": 30,
-	"dec": 31,
-}
+//  |||      |||||  |||||
+//  |||||    ||     ||
+//  || ||    ||||   ||
+//  ||  ||   ||     ||
+//  ||   ||  |||||  |||||
 
-func TrimMonth(month string) string {
-	return month[0:3]
-}
+func checkRecurrents(today int, daysOut int, mn string) []string {
 
-// flack  "\033[1;30m%s\033[0m"
-// zed    "\033[1;31m%s\033[0m"
-// lreen  "\033[1;32m%s\033[0m"
-// bellow "\033[1;33m%s\033[0m"
-// yurple "\033[1;34m%s\033[0m"
-// bagenta"\033[1;35m%s\033[0m"
-// peal   "\033[1;36m%s\033[0m"
-// khite  "\033[1;37m%s\033[0m"
-
-func checkRecurrents(now time.Time, daysOut int) []string {
-
-	reminderRead, _ := os.ReadFile(TxtPath("recurrent"))
-	recurrents := string(reminderRead)
-	recArray := strings.Split(recurrents, "\n")
-
-	today, _ := strconv.Atoi(now.Format("02"))
+	recs, _ := os.ReadFile(TxtPath("recurrent"))
+	recArray := strings.Split(
+		string(recs), "\n",
+	)
 
 	var targetStrings []string
 
-	for i := range recArray {
-		atSplt := strings.Split(recArray[i], "@")
+	for ln := range recArray {
+		atSplt := strings.Split(recArray[ln], "@")
 
-		// not actually n^2, should only be 1 '@' in a line
-		for ithSlice := range atSplt {
+		for i := range atSplt {
 
-			piece := strings.TrimSpace(atSplt[ithSlice])
-			checkDay, er := strconv.Atoi(piece)
+			splLine := strings.TrimSpace(atSplt[i])
+			day, er := strconv.Atoi(splLine)
 
 			if er == nil {
 
-				daysWithin := checkDay - today
+				daysWithin := day - today
 
-				if daysWithin >= 0 && daysWithin <= daysOut {
+				if passesDayCheck(today, day, daysOut, mn) {
 
 					formatStr := " >> "
-					switch daysWithin {
-					case 0:
-						formatStr += "\033[1;31m" + "today" + "\033[0m"
-
-					case 1:
-						formatStr += "1 day"
-
-					default:
-						formatStr += fmt.Sprintf("%v days", daysWithin)
-					}
+					// still have to fix in case of negative
+					formatStr += colorFmt(daysWithin)
 
 					tmp := strings.TrimSpace(atSplt[0]) + formatStr
 					targetStrings = append(targetStrings, tmp)
+
 				}
+
 			}
 		}
 	}
 
 	return targetStrings
+}
+
+// Logic for the case where the target day being checked against is a low number, like the 1st
+// of a month, and the current day is the 30th or so -- the original code didn't "wraparound".
+// This handles the overall threshold of days for both recurrents and one-time checks.
+func passesDayCheck(today int, targ int, daysOut int, mn string) bool {
+	var daysWithin int
+	if (targ - today) < 0 {
+		nxtMonths := GetNextMonthsDays(mn)
+		daysWithin = (targ + nxtMonths) - today
+	} else {
+		daysWithin = targ - today
+	}
+
+	if daysWithin <= daysOut {
+		return true
+	} else {
+		return false
+	}
+}
+
+func colorFmt(numDays int) string {
+	tmp := ""
+	switch numDays {
+	case 0:
+		tmp += "\033[1;31m" + "today" + "\033[0m"
+
+	case 1:
+		tmp += "\033[1;33m" + "1 day" + "\033[0m"
+
+	case 2:
+		tmp += fmt.Sprintf("\033[1;32m%v days\033[0m", numDays)
+
+	default:
+		tmp += fmt.Sprintf("\033[1;36m%v days\033[0m", numDays)
+	}
+	return tmp
 }
 
 func readInternals() []string {
@@ -140,15 +142,18 @@ func todayHasNotBeenChecked(today string) bool {
 
 func writeCheckedDay(now string, data []string) {
 
-	output := now + "\n"
+	tmp := now + "\n"
 
 	for i := range data {
-		output += data[i] + "\n"
+		tmp += data[i] + "\n"
 	}
+
+	// slice off last newline
+	tmp = tmp[:len(tmp)-2]
 
 	os.WriteFile(
 		ArgCleaner("homedir check"),
-		[]byte(output),
+		[]byte(tmp),
 		0644,
 	)
 }

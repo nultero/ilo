@@ -49,7 +49,7 @@ func main() {
 		//                        i.e., any args will bypass these checks
 		now := time.Now()
 		todaysFormatDate := now.Format("02 Mon")
-		month := TrimMonth(now.Month().String())
+		month := now.Month().String()[0:3]
 		fmt.Println(prompt, month, todaysFormatDate)
 
 		daysOut := string(Parser(configs, "=", "default_days_check"))
@@ -57,9 +57,8 @@ func main() {
 
 	} else {
 
-		for arg := range flag.Args() {
-			// i.e., 'rm' returns 'remove' from Cleaner()
-			flag.Args()[arg] = ArgCleaner(flag.Args()[arg])
+		for i := range flag.Args() {
+			flag.Args()[i] = ArgCleaner(flag.Args()[i])
 		}
 
 		sortedArgs := ArgumentPrioritizer(flag.Args())

@@ -108,10 +108,9 @@ func List(typeOf string) {
 } // \----------------------- LIST() basically done lol
 
 func Test() {
-	TermClear()
-	fmt.Print("Input? : ")
-	// i := HandleOptionsInput("> ")
-	fmt.Println(strings.Repeat("Jackson The Horse ", 90))
+	fmt.Println(passesDayCheck(
+		30, 3, 3, "Jan",
+	))
 }
 
 func TermClear() {
