@@ -17,6 +17,9 @@ func CheckReminders(now time.Time, month string, daysOut string) {
 	tdysFmt := now.Format("02 Mon")
 	mn := now.Month().String()[0:3]
 
+	// the newline slice at the end seems to be malfunctioning
+	// also a bug in the dates' arithmetic somewhere
+
 	if todayHasNotBeenChecked(tdysFmt) {
 
 		intDays, _ := strconv.Atoi(daysOut)
@@ -149,7 +152,7 @@ func writeCheckedDay(now string, data []string) {
 	}
 
 	// slice off last newline
-	tmp = tmp[:len(tmp)-2]
+	tmp = tmp[:len(tmp)-1]
 
 	os.WriteFile(
 		ArgCleaner("homedir check"),
