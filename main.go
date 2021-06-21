@@ -21,14 +21,10 @@ import (
 //   /
 //	 >> export and import data for when you mess up
 //   /
-//   aliases.txt <-- later
-//   kinds of aliases: nav, helpers, formats, shorteners, tooling, funcs
 //   kinds of crons: server side, home side, emb for embed? / pi
-//   kinds of backups: track bys, gitlike, dotfiles
 //
 //   ^ all should be fairly transparent from outside tailbox, in native formats or plaintext
 //
-// * use last confirm to tidy up dotfile migration
 //
 // change default directory
 // -dir flag for pwd on bx's $home
