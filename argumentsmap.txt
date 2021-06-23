@@ -1,0 +1,29 @@
+
+# only flag Tumbo needs is -h or --help?
+config opts:
+    DEFAULT_CONFIG_PATH  ->  where Tumbo and its aliases live
+    DEFAULT_SHELL_SOURCE  ->  where to put zipped aliases when source func is called
+    TRUNCATE_SOURCE ->  only for not appending to _aliases or rc files
+                        > flag for non-truncate for rc files?
+
+  tailbox (shortens to bx)
+$  bx       |  add     |\
+            |          | \
+            |  edit    |--\ (all same arguments for the below)
+            |          |   \
+            |  list    |----\
+            |          |     \
+            |  remove  |------\  * event     -->  a SINGLE TICK reminder
+            |                  | * recurrent -->  a MULTI-TICK reminder
+            |                  | * wishlist  --> intended to be for things like games releases, show releases, etc. 
+            |                  |    
+            |                  |    ^ these will ask for datetimes
+            |                  |      (wishlist is optional on datetime)
+            |                  |    | ideas
+            |                  | * todo      --> intended to print from shellrc on open, all about being annoying and fixable
+            |                  | * cron      --> intended for simple cron jobs, might be future chunk feature for myself
+            |
+            |
+            |  help  |  -h      --> goes anywhere, prints help if called with function, or just prints all CLI API args' helps
+            |  home  |  -dir    --> maybe easy migrate all of bx's stuff?
+            |  conf  | -c, --conf

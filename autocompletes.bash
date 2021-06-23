@@ -9,7 +9,7 @@ _bx() {
     "add" | "edit" | "help" | "list" | "remove")
         OPTS=${SECONDOPTS[*]}
     ;;
-    "alias" | "event" | "idea" | "onetime" | "recurrent" | "todo" | "wishlist")
+    "event" | "idea" | "onetime" | "recurrent" | "todo" | "wishlist")
         OPTS=()
     ;;
     *)
