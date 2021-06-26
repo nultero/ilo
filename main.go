@@ -3,36 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
-	"strings"
+	"os"
 	"time"
-
-	"github.com/manifoldco/promptui"
 )
 
-//
-//
-//---- baselines ----//
-//
-// files:
-//	 config.txt
-//   one_time_rmds.txt
-//   recurrent_rmds.txt
-//   todos.txt
-//   /
-//	 >> export and import data for when you mess up
-//   /
-//   aliases.txt <-- later
-//   kinds of aliases: nav, helpers, formats, shorteners, tooling, funcs
-//   kinds of crons: server side, home side, emb for embed? / pi
-//   kinds of backups: track bys, gitlike, dotfiles
-//
-//   ^ all should be fairly transparent from outside tailbox, in native formats or plaintext
-//
-// * use last confirm to tidy up dotfile migration
-//
-// change default directory
-// -dir flag for pwd on bx's $home
-// -h flag for forgetting all cmds
+// bx's PATH should be, for instance:
+const PATH = "~/.nultero/tailbox/"
+
+const (
+	promptIcon = "promptIcon"
+	fileType   = "fileType"
+	funct      = "func"
+)
 
 //  ||
 //  |||||  ||  ||
@@ -42,121 +24,83 @@ import (
 func main() {
 
 	flag.Parse()
-	configs := ConfigureStuff(ArgCleaner("homedir conf"))
-	prompt := string(Parser(configs, "=", "default_prompt") + " ")
+	logicBus := map[string]string{}
+	config := Configure(PATH)
+	logicBus[promptIcon] = string(Parser(config, "=", "default_prompt") + " ")
 
-	if len(flag.Args()) == 0 { // bx will only check stuff if called passively
-		//                        i.e., any args will bypass these checks
+	if len(flag.Args()) == 0 { // zero args calls checks, prints reminders if close, and the date
+		//						  and if already called today, prints cached info
+
 		now := time.Now()
 		todaysFormatDate := now.Format("02 Mon")
 		month := now.Month().String()[0:3]
-		fmt.Println(prompt, month, todaysFormatDate)
+		fmt.Println(logicBus[promptIcon], month, todaysFormatDate)
 
-		daysOut := string(Parser(configs, "=", "default_days_check"))
-		CheckReminders(now, month, daysOut)
+	} else { // if bx is called with args, it will parse args instead of doing its checks
 
-	} else {
-
-		for i := range flag.Args() {
-			flag.Args()[i] = ArgCleaner(flag.Args()[i])
+		for i := 0; i < len(flag.Args()); i++ {
+			vals := validateArg(i, flag.Args()[i])
+			logicBus[vals[0]] = vals[1]
 		}
 
-		sortedArgs := ArgumentPrioritizer(flag.Args())
-		eval(sortedArgs, prompt)
+		if len(logicBus) == 2 { // in case of only CRUD arg, prompt is also in bus
+			logicBus[fileType] = HandlesPrompts(logicBus[promptIcon], "args")
+		}
+
+		_eval(logicBus[funct], logicBus)
 	}
 }
 
-func eval(args []string, promptstr string) {
-
-	if args[0] != "test" && args[0] != "help" {
-		for i := 0; i < len(args); i++ { // prompts
-			if args[i] == "" {
-				args[i] = prompt(i)
-			}
-		}
-	}
-
-	switch args[0] { // final args are digested into eval
+func _eval(function string, bus map[string]string) {
+	switch function {
 	case "add":
-		Add(args[1], promptstr)
+
 	case "edit":
-		Edit(args[1], promptstr)
+
 	case "list":
-		List(args[1])
+
 	case "remove":
-		Remove(args[1])
-	case "test":
+		for i := range bus {
+			fmt.Println(i, ": ", bus[i])
+		}
+
+	case "test", "home", "config", "help":
 		Test()
 	}
 }
 
-///   ||||            |   |           ||||  |  |  |
-///   |               |   |           |  |     | |
-///   ||    ||||   ||||   |     ||||  ||||  |  ||
-///   |     ||  |  |  |   |     |  |     |  |  | |
-///   ||||  ||  |  ||||   ||||  ||||  ||||  |  |  |
-///
-///
-//
-// All below are for Main()'s input cleansing.
-// All specific logic is elsewhere, in utils or exported funcs
-
-////////////
-func prompt(i int) string {
-
-	tmp := ""
-	msg := "options for "
-	fmt.Println(">", strings.Repeat("-", 15))
-
-	if i == 0 { // verb was missing
-		promptstr := "> " + string(msg+"bx's verbs")
-		tmp = verbsPrompt(promptstr)
-
-	} else { // noun was missing
-		promptstr := "> " + string(msg+"bx's nouns")
-		tmp = nounsPrompt(promptstr)
-	}
-
-	return tmp
+func _invalidateArg(rg string, i string) {
+	fmt.Printf("'%v' is an invalid %v argument to bx", rg, i)
+	os.Exit(0)
 }
 
-func verbsPrompt(promptstr string) string {
-	opts := []string{
-		"add",
-		"edit",
-		"list",
-		"help",
-		"test",
-		"remove"}
+func validateArg(index int, rg string) []string {
 
-	return HandlesOpts(TinyArray(promptstr), opts)
-}
+	var vals []string
 
-func nounsPrompt(promptstr string) string {
-	opts := []string{
-		"onetime",
-		"alias",
-		"event",
-		"idea",
-		"recurrent",
-		"todo",
-		"wishlist"}
+	// digest to see if help or home or configs or whatever
+	// AND bx_defaults argument for changing stuff
 
-	return HandlesOpts(TinyArray(promptstr), opts)
-}
+	if index == 0 {
+		fn := "func"
+		switch rg {
+		case "add", "edit", "list", "remove":
+			vals = append(vals, fn, rg)
+		default:
+			_invalidateArg(rg, "1st")
+		}
 
-func HandlesOpts(promptstr, opts []string) string {
+	} else if index == 1 {
+		it := "item"
+		switch rg {
+		case "cron", "event", "idea", "recurrent", "todo", "wishlist":
+			vals = append(vals, it, rg)
+		default:
+			_invalidateArg(rg, "2nd")
+		}
 
-	prompt := promptui.Select{
-		Label: promptstr[0],
-		Items: opts,
+	} else if index >= 2 {
+		_invalidateArg(rg, "3rd")
 	}
-
-	_, tmp, err := prompt.Run()
-
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-	}
-
-	return tmp
+	return vals
 }

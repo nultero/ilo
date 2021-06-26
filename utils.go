@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 // outline --
@@ -83,17 +82,17 @@ func Add(typeOf string, promptstr string) {
 //  |    |   |   |     |
 //  |||| ||||  |||||   |
 
-func Edit(typeOf string, promptstr string) {
-	dat := contents(typeOf)
-	opts := strings.Split(dat, "\n")
-	toEdit := HandlesOpts(TinyArray("entry to edit"), opts)
-	index := indexMatch(toEdit, opts)
+// func Edit(typeOf string, promptstr string) {
+// 	dat := contents(typeOf)
+// 	opts := strings.Split(dat, "\n")
+// 	// toEdit := HandlesOpts(TinyArray("entry to edit"), opts)
+// 	index := indexMatch(toEdit, opts)
 
-	fmt.Println("string selected for edit: " + toEdit + "\nreplace: ")
-	replacer := HandleStringInput(promptstr)
-	opts[index] = replacer
-	writeOut(typeOf, opts)
-}
+// 	fmt.Println("string selected for edit: " + toEdit + "\nreplace: ")
+// 	replacer := HandleStringInput(promptstr)
+// 	opts[index] = replacer
+// 	writeOut(typeOf, opts)
+// }
 
 //  ||   ||| |||| |||
 //  ||    |   |    |
@@ -122,18 +121,18 @@ func TermClear() {
 //  |||   |  |  |    | |
 //  |  |  |     |     |
 
-func Remove(typeOf string) {
-	dat := contents(typeOf)
-	opts := strings.Split(dat, "\n")
-	toEdit := HandlesOpts(TinyArray("entry to remove"), opts)
-	index := indexMatch(toEdit, opts)
+// func Remove(typeOf string) {
+// 	dat := contents(typeOf)
+// 	opts := strings.Split(dat, "\n")
+// 	toEdit := HandlesOpts(TinyArray("entry to remove"), opts)
+// 	index := indexMatch(toEdit, opts)
 
-	altOpts := make([]string, len(opts)-1)
+// 	altOpts := make([]string, len(opts)-1)
 
-	//writing common elements to altOpts, skipping index to rmv
-	altOpts = append(opts[:index], opts[index+1:]...)
-	writeOut(typeOf, altOpts)
-}
+// 	//writing common elements to altOpts, skipping index to rmv
+// 	altOpts = append(opts[:index], opts[index+1:]...)
+// 	writeOut(typeOf, altOpts)
+// }
 
 // Common to Edit() and Remove(). Grabs index for writing to the spot in opts[] arg.
 func indexMatch(strMatch string, opts []string) int {
