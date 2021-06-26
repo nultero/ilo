@@ -8,9 +8,10 @@ import (
 
 // Config is for prompts, controlling fmt.Println colors, and what/when types print
 // function itself just inits / grabs those
-func ConfigureStuff(confPath string) string {
+func Configure(confPath string) string {
 
-	config, excptn := os.ReadFile(confPath)
+	cf := HandleConfPath(string(confPath + "config.txt"))
+	config, excptn := os.ReadFile(cf)
 
 	for excptn != nil { // files don't exist / deleted
 
@@ -80,10 +81,10 @@ func writeDefaults(prompt string, confPath string) {
 
 	files := []string{
 		"bx_checks.txt",
-		"one_time_reminders.txt",
+		"events.txt",
 		"recurrent_reminders.txt",
 		"todos.txt",
-		"aliases.txt"}
+		"crons.txt"}
 
 	for index, file := range files {
 		frmt := fmt.Sprint(index+1) + " > Creating " + file + " in " + basePath
