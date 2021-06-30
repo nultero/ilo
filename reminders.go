@@ -10,7 +10,7 @@ import (
 
 // Reminders
 //    -- check list :
-//    -- one time reminders
+//    -- events
 //    -- recurrent stuff
 func CheckReminders(now time.Time, month string, daysOut string) {
 

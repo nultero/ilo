@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -10,11 +9,12 @@ func getHome() string {
 	return home
 }
 
-func HandleConfPath(confPath string) string {
+func HandleHomePath(confPath string) string {
 	rebuiltPath := ""
 	if confPath[0] == '~' {
 		rebuiltPath += getHome() + confPath[1:]
+	} else {
+		rebuiltPath = confPath
 	}
-	fmt.Printf("rebuilt path = %s \n", rebuiltPath)
 	return rebuiltPath
 }

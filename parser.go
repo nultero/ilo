@@ -4,21 +4,22 @@ import (
 	"strings"
 )
 
-// Parser ... what it says on the tin
-func Parser(txt string, splitter string, search string) string {
+// Parser
+func Parser(txt string, search string) string {
 
 	txt = strings.TrimSpace(txt)
-	splitNewlines := strings.Split(txt, "\n")
+	lines := strings.Split(txt, "\n")
 	find := ""
 
-	for i := range splitNewlines {
+	for i := range lines {
 
-		sor := strings.Split(splitNewlines[i], splitter)
-		sor[0] = strings.TrimSpace(sor[0])
-		sor[1] = strings.TrimSpace(sor[1])
+		if lines[i][0] != byte('#') {
 
-		if sor[0] == search {
-			if sor[0][0] != byte('#') {
+			sor := strings.Split(lines[i], "=")
+			sor[0] = strings.TrimSpace(sor[0])
+			sor[1] = strings.TrimSpace(sor[1])
+
+			if sor[0] == search {
 				find = sor[1]
 			}
 		} // if nothing's found,

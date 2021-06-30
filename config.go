@@ -10,18 +10,18 @@ import (
 // function itself just inits / grabs those
 func Configure(confPath string) string {
 
-	cf := HandleConfPath(string(confPath + "config.txt"))
-	config, excptn := os.ReadFile(cf)
+	cf := confPath + "config.txt"
+	config, err := os.ReadFile(cf)
 
-	for excptn != nil { // files don't exist / deleted
+	for err != nil { // files don't exist / deleted
 
 		prompt := "❯➤ " // default
 
 		// user confirms dir  / not making sys changes w/out input
 		confNotFound(confPath, prompt)
-		writeDefaults(prompt, confPath)
+		writeDefaults(prompt, confPath, cf)
 		configsOutro(prompt)
-		excptn = nil
+		err = nil
 		config, _ = os.ReadFile(confPath)
 
 	}
@@ -33,11 +33,11 @@ func confNotFound(confPath string, prompt string) {
 
 	fmt.Println("<bx>", "No config file found.")
 	fmt.Println("<bx>", "Default config path is: "+confPath)
-	fmt.Printf(" %s Create new config? (y | n)"+"\t\n(bx will just exit if not 'y') : ", prompt)
+	fmt.Printf(" %s Create new config? (y | n) \t\n(bx will just exit if not 'y') : ", prompt)
 
 	if grabInput() == "y" {
 		//bx's homedir in config or wherever
-		os.Mkdir(ArgCleaner("homedir"), 0755)
+		os.Mkdir(confPath, 0755)
 
 	} else { // this is if manually exited
 		fmt.Println(prompt, "sure thing, pardner")
@@ -61,23 +61,22 @@ func configsOutro(prompt string) {
 		"Configured defaults.", //           color the command?
 		"Feel free to change them by running {bx defaults}."}
 
-	for confirmString := range printsWhenDone {
-		fmt.Println(prompt, printsWhenDone[confirmString])
+	for iStr := range printsWhenDone {
+		fmt.Println(prompt, printsWhenDone[iStr])
 		time.Sleep(700 * time.Millisecond)
 	}
 	fmt.Println(" ") //buffer
 }
 
-func writeDefaults(prompt string, confPath string) {
+func writeDefaults(prompt string, confPath string, confFile string) {
 
 	outbound := []byte(
-		"default_todo_symbol = ○" +
-			"\n" + "default_prompt = " + prompt +
-			"\n" + "default_days_check = 3")
+		"todoSymbol = ○" +
+			"\n" + "promptIcon = " + prompt +
+			"\n" + "# days ahead to check for" +
+			"\n" + "days = 3")
 
-	os.WriteFile(confPath, outbound, 0644)
-
-	basePath := ArgCleaner("homedir")
+	os.WriteFile(confFile, outbound, 0644)
 
 	files := []string{
 		"bx_checks.txt",
@@ -87,9 +86,9 @@ func writeDefaults(prompt string, confPath string) {
 		"crons.txt"}
 
 	for index, file := range files {
-		frmt := fmt.Sprint(index+1) + " > Creating " + file + " in " + basePath
+		frmt := fmt.Sprint(index+1) + " > Creating " + file + " in " + confPath
 		fmt.Println("<bx>", frmt)
 		os.WriteFile(
-			(basePath + file), []byte(""), 0644)
+			(confPath + file), []byte(""), 0644)
 	}
 }
