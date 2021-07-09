@@ -53,7 +53,7 @@ func printall(data []string) {
 
 func checkRecurrents(today int, daysOut int, mn string) []string {
 
-	recs, _ := os.ReadFile(TxtPath("recurrent"))
+	recs, _ := os.ReadFile("recurrent")
 	recArray := strings.Split(
 		string(recs), "\n",
 	)

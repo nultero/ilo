@@ -18,3 +18,17 @@ func HandleHomePath(confPath string) string {
 	}
 	return rebuiltPath
 }
+
+func PathGlob(path string, fileType string) string {
+	switch fileType {
+
+	case "recurrent":
+		fileType = "recurrent_reminders"
+
+	case "todo":
+		fileType = "todos"
+
+	}
+
+	return string(path + fileType + ".txt")
+}

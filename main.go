@@ -10,7 +10,7 @@ import (
 // bx's PATH should be, for instance:
 const PATH = "~/.nultero/tailbox/"
 
-// I should put the PATH in some kind of script
+// I should put the PATH in some kind of init script
 
 const (
 	promptIcon = "promptIcon"
@@ -40,6 +40,10 @@ func main() {
 		month := now.Month().String()[0:3]
 		fmt.Println(logicBus[promptIcon], month, todaysFormatDate)
 
+		//checks
+		//checks
+		//checks
+
 	} else { // if bx is called with args, it will parse args instead of doing its checks
 
 		logicBus[bxPath] = path
@@ -49,8 +53,9 @@ func main() {
 			logicBus[vals[0]] = vals[1]
 		}
 
-		if len(logicBus) == 2 { // in case of only CRUD arg, prompt is also in bus
-			logicBus[fileType] = HandlesPrompts(logicBus[promptIcon], "args")
+		if len(logicBus) == 3 { // in case of only CRUD arg, prompt is also in bus
+			promptStr := fmt.Sprintf("%s '%s' needs an argument", logicBus[promptIcon], logicBus[funct])
+			logicBus[fileType] = HandleArguments(promptStr)
 		}
 
 		_eval(logicBus[funct], logicBus)
@@ -60,16 +65,16 @@ func main() {
 func _eval(function string, bus map[string]string) {
 	switch function {
 	case "add":
+		Add(bus)
 
 	case "edit":
+		Edit(bus)
 
 	case "list":
+		List(bus[bxPath], bus[fileType])
 
 	case "remove":
-
-		for i := range bus {
-			fmt.Println(i, ": ", bus[i])
-		}
+		Remove(bus)
 
 	case "test", "home", "config", "help":
 		Test()
@@ -77,7 +82,7 @@ func _eval(function string, bus map[string]string) {
 }
 
 func _invalidateArg(rg string, i string) {
-	fmt.Printf("'%v' is an invalid %v argument to bx", rg, i)
+	fmt.Printf("'%v' is an invalid %v argument to bx \n", rg, i)
 	os.Exit(0)
 }
 
@@ -98,10 +103,14 @@ func validateArg(index int, rg string) []string {
 		}
 
 	} else if index == 1 {
-		it := "item"
+		ft := "fileType"
 		switch rg {
-		case "cron", "event", "idea", "recurrent", "todo", "wishlist":
-			vals = append(vals, it, rg)
+		case "todo":
+			vals = append(vals, ft, "todos")
+
+		case "cron", "event", "idea", "recurrent", "wishlist":
+			vals = append(vals, ft, rg)
+
 		default:
 			_invalidateArg(rg, "2nd")
 		}
