@@ -8,17 +8,6 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func _args() []string {
-	return []string{
-		"cron",
-		"event",
-		"idea",
-		"recurrent",
-		"todo",
-		"wishlist",
-	}
-}
-
 // Exports a string that is unchecked against any args.
 // Pass to a separate function to map cleaner args in passthrough.
 func HandleStringInput(promptstr string) string { // only takes/rds string
@@ -34,7 +23,7 @@ func HandleArguments(promptIcon string) string {
 
 	ptui := promptui.Select{
 		Label: promptIcon,
-		Items: _args(),
+		Items: ValidKinds,
 	}
 
 	_, tmp, err := ptui.Run()

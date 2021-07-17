@@ -23,7 +23,7 @@ func HandleHomePath(p string) string {
 func PathGlob(fileType string) string {
 	switch fileType {
 
-	case "check":
+	case "check", "cache":
 		fileType = "tailbox_cache"
 
 	case "recurrent":
@@ -34,10 +34,10 @@ func PathGlob(fileType string) string {
 
 	}
 
+	h := HandleHomePath(PATH)
 	p, _ := filepath.Abs(
-		string(PATH + fileType + ".txt"),
+		string(h + fileType + ".txt"),
 	)
-
 	return p
 }
 

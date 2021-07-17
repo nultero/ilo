@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"strings"
 )
 
@@ -17,6 +15,7 @@ var ValidKinds = []string{
 	"event",
 	"idea",
 	"recurrent",
+	"todos",
 	"wishlist",
 }
 
@@ -29,11 +28,11 @@ func iterate(s string, sl []string) bool {
 	return false
 }
 
-func isValidFunc(arg string) bool {
+func IsValidFunc(arg string) bool {
 	return iterate(arg, ValidArgs)
 }
 
-func isValidFileType(arg string) bool {
+func IsValidFileType(arg string) bool {
 	return iterate(arg, ValidKinds)
 }
 
@@ -43,11 +42,6 @@ func IsFlag(arg string) bool {
 	}
 
 	return false
-}
-
-func InvalidateArg(arg, i string) {
-	fmt.Printf("'%v' is an invalid %v argument to bx \n", arg, i)
-	os.Exit(1)
 }
 
 func IsEmpty(s string) bool {

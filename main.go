@@ -54,21 +54,33 @@ func main() {
 	} else { // if bx is called with args, it will parse args instead of doing its checks
 
 		for i := range args {
-			if isValidFunc(args[i]) {
+			if IsValidFunc(args[i]) {
 				if IsEmpty(b.Funct) {
 					b.Funct = args[i]
 				} else {
 					throwDuplArgError(args[i], b.Funct)
 				}
-			} else if isValidFileType(args[i]) {
+
+			} else if IsValidFileType(args[i]) {
 				if IsEmpty(b.FileType) {
 					b.FileType = args[i]
 				} else {
 					throwDuplArgError(args[i], b.FileType)
 				}
-			} else { // parse flags here
+
+			} else if IsFlag(args[i]) { // parse flags here
 				fmt.Println("parse flags blah blah")
+
+			} else {
+				s := fmt.Sprintf("'%s' is not a valid argument", args[i])
+				fmt.Println(RedError(), s)
+				os.Exit(1)
 			}
+
+		}
+
+		if IsEmpty(b.Funct) {
+			fmt.Println(RedError(), "no function passed to bx")
 		}
 
 		if IsEmpty(b.FileType) { // in case of only CRUD arg, prompt is also in bus
@@ -96,13 +108,16 @@ func _eval(b Bus) {
 
 	case "test", "home", "config", "help":
 		fmt.Println("poo")
+
+	default:
+		fmt.Println("dump")
 	}
 }
 
 func throwDuplArgError(this, prevFound string) {
 	fmt.Printf("! >> '%s' found, but already passed '%s' as argument \n", this, prevFound)
 	fmt.Println(RedError(), "cannot have two of the type of argument")
-	os.Exit(0)
+	os.Exit(1)
 }
 
 func RedError() string {

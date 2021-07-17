@@ -80,7 +80,7 @@ func writeDefaults(prompt string, path string, confFile string) {
 	os.WriteFile(confFile, outbound, 0644)
 
 	files := []string{
-		"bx_checks.txt",
+		"tailbox_cache.txt",
 		"events.txt",
 		"recurrent_reminders.txt",
 		"todos.txt",
