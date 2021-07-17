@@ -1,9 +1,9 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -12,12 +12,13 @@ const PATH = "~/.nultero/tailbox/"
 
 // I should put the PATH in some kind of init script
 
-const (
-	promptIcon = "promptIcon"
-	fileType   = "fileType"
-	funct      = "func"
-	bxPath     = "bxPath"
-)
+type Bus struct {
+	PromptIcon string
+	FileType   string
+	Funct      string
+	Path       string
+	Help       bool
+}
 
 //  ||
 //  |||||  ||  ||
@@ -26,19 +27,25 @@ const (
 
 func main() {
 
-	flag.Parse()
-	logicBus := map[string]string{}
-	path := HandleHomePath(PATH)
-	config := Configure(path)
-	logicBus[promptIcon] = Parser(config, promptIcon) + " "
+	args := os.Args[1:]
+	p, _ := filepath.Abs(HandleHomePath(PATH))
+	config := Configure()
 
-	if len(flag.Args()) == 0 { // zero args calls checks, prints reminders if within config's threshold, and current date
+	b := Bus{
+		PromptIcon: Parser(config, "promptIcon") + " ",
+		FileType:   "",
+		Funct:      "",
+		Path:       p,
+		Help:       false,
+	}
+
+	if len(args) == 0 { // zero args calls checks, prints reminders if within config's threshold, and current date
 		//						  and if already called today, prints cached info
 
 		now := time.Now()
 		todaysFormatDate := now.Format("02 Mon")
 		month := now.Month().String()[0:3]
-		fmt.Println(logicBus[promptIcon], month, todaysFormatDate)
+		fmt.Println(b.PromptIcon, month, todaysFormatDate)
 
 		//checks
 		//checks
@@ -46,77 +53,58 @@ func main() {
 
 	} else { // if bx is called with args, it will parse args instead of doing its checks
 
-		logicBus[bxPath] = path
-
-		for i := 0; i < len(flag.Args()); i++ {
-			vals := validateArg(i, flag.Args()[i])
-			logicBus[vals[0]] = vals[1]
+		for i := range args {
+			if isValidFunc(args[i]) {
+				if IsEmpty(b.Funct) {
+					b.Funct = args[i]
+				} else {
+					throwDuplArgError(args[i], b.Funct)
+				}
+			} else if isValidFileType(args[i]) {
+				if IsEmpty(b.FileType) {
+					b.FileType = args[i]
+				} else {
+					throwDuplArgError(args[i], b.FileType)
+				}
+			} else { // parse flags here
+				fmt.Println("parse flags blah blah")
+			}
 		}
 
-		if len(logicBus) == 3 { // in case of only CRUD arg, prompt is also in bus
-			promptStr := fmt.Sprintf("%s '%s' needs an argument", logicBus[promptIcon], logicBus[funct])
-			logicBus[fileType] = HandleArguments(promptStr)
+		if IsEmpty(b.FileType) { // in case of only CRUD arg, prompt is also in bus
+			promptStr := fmt.Sprintf("%s '%s' needs an argument", b.PromptIcon, b.FileType)
+			b.FileType = HandleArguments(promptStr)
 		}
 
-		_eval(logicBus[funct], logicBus)
+		_eval(b)
 	}
 }
 
-func _eval(function string, bus map[string]string) {
-	switch function {
+func _eval(b Bus) {
+	switch b.Funct {
 	case "add":
-		Add(bus)
+		Add(b)
 
 	case "edit":
-		Edit(bus)
+		Edit(b)
 
 	case "list":
-		List(bus[bxPath], bus[fileType])
+		List(b.Path, b.FileType)
 
 	case "remove":
-		Remove(bus)
+		Remove(b)
 
 	case "test", "home", "config", "help":
-		Test()
+		fmt.Println("poo")
 	}
 }
 
-func _invalidateArg(rg string, i string) {
-	fmt.Printf("'%v' is an invalid %v argument to bx \n", rg, i)
+func throwDuplArgError(this, prevFound string) {
+	fmt.Printf("! >> '%s' found, but already passed '%s' as argument \n", this, prevFound)
+	fmt.Println(RedError(), "cannot have two of the type of argument")
 	os.Exit(0)
 }
 
-func validateArg(index int, rg string) []string {
-
-	var vals []string
-
-	// digest to see if help or home or configs or whatever
-	// AND bx_defaults argument for changing stuff
-
-	if index == 0 {
-		fn := funct
-		switch rg {
-		case "add", "edit", "list", "remove":
-			vals = append(vals, fn, rg)
-		default:
-			_invalidateArg(rg, "1st")
-		}
-
-	} else if index == 1 {
-		ft := "fileType"
-		switch rg {
-		case "todo":
-			vals = append(vals, ft, "todos")
-
-		case "cron", "event", "idea", "recurrent", "wishlist":
-			vals = append(vals, ft, rg)
-
-		default:
-			_invalidateArg(rg, "2nd")
-		}
-
-	} else if index >= 2 {
-		_invalidateArg(rg, "3rd")
-	}
-	return vals
+func RedError() string {
+	return "\033[31;1;4merror:\033[0m"
 }

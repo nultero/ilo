@@ -12,15 +12,15 @@ import (
 //  |     |  |||   |||
 
 // takes & adds a str input onto a given filetype
-func Add(bus map[string]string) {
+func Add(b Bus) {
 
-	path := PathGlob(bus[bxPath], bus[fileType])
+	path := PathGlob(b.FileType)
 	datum, _ := os.ReadFile(path)
 
 	data := string(datum)
 
-	fmt.Println("Adding to '" + bus[fileType] + "':")
-	addLine := HandleStringInput(bus[promptIcon])
+	fmt.Println("Adding to '" + b.FileType + "':")
+	addLine := HandleStringInput(b.PromptIcon)
 	data = data + "\n" + addLine
 	// still needs stuff like for DateTimes and whatnot
 	// based on fileType
@@ -35,12 +35,12 @@ func Add(bus map[string]string) {
 //  |    |   |   |     |
 //  |||| ||||  |||||   |
 
-func Edit(bus map[string]string) {
+func Edit(b Bus) {
 
-	path := PathGlob(bus[bxPath], bus[fileType])
+	path := PathGlob(b.FileType)
 	datum, _ := os.ReadFile(path)
 
-	icon := bus[promptIcon]
+	icon := b.PromptIcon
 	data := string(datum)
 
 	opts := strings.Split(data, "\n")
@@ -62,7 +62,7 @@ func Edit(bus map[string]string) {
 
 // Lists contents of argpath.
 func List(path string, fileType string) {
-	ls, _ := os.ReadFile(PathGlob(path, fileType))
+	ls, _ := os.ReadFile(PathGlob(fileType))
 	contents := string(ls)
 	fmt.Println(contents)
 } // \-----------------------
@@ -72,12 +72,12 @@ func List(path string, fileType string) {
 //  |||   |  |  |    | |
 //  |  |  |     |     |
 
-func Remove(bus map[string]string) {
+func Remove(b Bus) {
 
-	path := PathGlob(bus[bxPath], bus[fileType])
+	path := PathGlob(b.FileType)
 	datum, _ := os.ReadFile(path)
 
-	icon := bus[promptIcon]
+	icon := b.PromptIcon
 	data := string(datum)
 
 	opts := strings.Split(data, "\n")

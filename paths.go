@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"path/filepath"
 )
 
 func getHome() string {
@@ -9,18 +10,21 @@ func getHome() string {
 	return home
 }
 
-func HandleHomePath(confPath string) string {
+func HandleHomePath(p string) string {
 	rebuiltPath := ""
-	if confPath[0] == '~' {
-		rebuiltPath += getHome() + confPath[1:]
+	if p[0] == '~' {
+		rebuiltPath += getHome() + p[1:]
 	} else {
-		rebuiltPath = confPath
+		return p
 	}
 	return rebuiltPath
 }
 
-func PathGlob(path string, fileType string) string {
+func PathGlob(fileType string) string {
 	switch fileType {
+
+	case "check":
+		fileType = "tailbox_cache"
 
 	case "recurrent":
 		fileType = "recurrent_reminders"
@@ -30,5 +34,21 @@ func PathGlob(path string, fileType string) string {
 
 	}
 
-	return string(path + fileType + ".txt")
+	p, _ := filepath.Abs(
+		string(PATH + fileType + ".txt"),
+	)
+
+	return p
+}
+
+func HomeSlashPath() string {
+	p := HandleHomePath(PATH)
+	if p[len(p)-1] != '/' {
+		p += "/"
+	}
+	return p
+}
+
+func ConfigPath() string {
+	return HomeSlashPath() + "config.txt"
 }
