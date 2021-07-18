@@ -30,28 +30,29 @@ func main() {
 	args := os.Args[1:]
 	p, _ := filepath.Abs(handleHomePath(PATH))
 	config := configure()
-
-	b := bus{
-		PromptIcon: Parser(config, "promptIcon") + " ",
-		FileType:   "",
-		Funct:      "",
-		Path:       p,
-		Help:       false,
-	}
+	icon := Parser(config, "promptIcon") + " "
 
 	if len(args) == 0 { // zero args calls checks, prints reminders if within config's threshold, and current date
 		//						  and if already called today, prints cached info
 
 		now := time.Now()
-		todaysFormatDate := now.Format("02 Mon")
+		todaysDate := now.Format("02 Mon")
 		month := now.Month().String()[0:3]
-		fmt.Println(b.PromptIcon, month, todaysFormatDate)
+		fmt.Println(icon, month, todaysDate)
 
-		//checks
-		//checks
-		//checks
+		runChecks(month, todaysDate)
+		// check cache if already done today
+		// run new checks if not already run
 
 	} else { // if bx is called with args, it will parse args instead of doing its checks
+
+		b := bus{
+			PromptIcon: icon,
+			FileType:   "",
+			Funct:      "",
+			Path:       p,
+			Help:       false,
+		}
 
 		for i := range args {
 			if isValidFunc(args[i]) {
@@ -122,4 +123,9 @@ func throwDuplArgError(this, prevFound string) {
 
 func redError() string {
 	return "\033[31;1;4merror:\033[0m"
+}
+
+func throwErr(r error) {
+	fmt.Println(redError(), r)
+	os.Exit(1)
 }

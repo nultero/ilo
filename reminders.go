@@ -12,7 +12,38 @@ import (
 //    -- check list :
 //    -- events
 //    -- recurrent stuff
-func CheckReminders(now time.Time, month string, daysOut string) {
+
+// Sees if current day has already had checks run, and if not,
+// runs the date against events and recurrent content set up in
+// the bx dir.
+func runChecks(month, today string) {
+	cache := readCache()
+	day := fmt.Sprintf("%s %s", month, today)
+
+	if cacheIsOld(cache[0], day) {
+		writeCheckedDay(day, []string{})
+
+	} else {
+		fmt.Println(cache)
+	}
+}
+
+func readCache() []string {
+	lastData, r := os.ReadFile(pathGlob("check"))
+	if r != nil {
+		throwErr(r)
+	}
+	return strings.Split(string(lastData), "\n")
+}
+
+func cacheIsOld(cacheTop, day string) bool {
+	if cacheTop != day {
+		return true
+	}
+	return false
+}
+
+func checkReminders(now time.Time, month string, daysOut string) {
 
 	tdysFmt := now.Format("02 Mon")
 	mn := now.Month().String()[0:3]
@@ -35,7 +66,7 @@ func CheckReminders(now time.Time, month string, daysOut string) {
 	} else {
 		// this is on the already-written file
 		// so skip the date line and just read content
-		printall(readInternals()[1:])
+		printall(readCache()[1:])
 	}
 }
 
@@ -127,15 +158,8 @@ func colorFmt(numDays int) string {
 	return tmp
 }
 
-func readInternals() []string {
-	lastData, _ := os.ReadFile(
-		pathGlob("check"),
-	)
-	return strings.Split(string(lastData), "\n")
-}
-
 func todayHasNotBeenChecked(today string) bool {
-	lastDay := readInternals()[0]
+	lastDay := readCache()[0]
 	if lastDay == today {
 		return false
 	} else {
@@ -143,9 +167,9 @@ func todayHasNotBeenChecked(today string) bool {
 	}
 }
 
-func writeCheckedDay(now string, data []string) {
+func writeCheckedDay(today string, data []string) {
 
-	tmp := now + "\n"
+	tmp := today + "\n"
 
 	for i := range data {
 		tmp += data[i] + "\n"
