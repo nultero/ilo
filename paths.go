@@ -10,7 +10,8 @@ func getHome() string {
 	return home
 }
 
-func HandleHomePath(p string) string {
+func handleHomePath(p string) string {
+
 	rebuiltPath := ""
 	if p[0] == '~' {
 		rebuiltPath += getHome() + p[1:]
@@ -20,7 +21,7 @@ func HandleHomePath(p string) string {
 	return rebuiltPath
 }
 
-func PathGlob(fileType string) string {
+func pathGlob(fileType string) string {
 	switch fileType {
 
 	case "check", "cache":
@@ -34,21 +35,21 @@ func PathGlob(fileType string) string {
 
 	}
 
-	h := HandleHomePath(PATH)
+	h := handleHomePath(PATH)
 	p, _ := filepath.Abs(
 		string(h + fileType + ".txt"),
 	)
 	return p
 }
 
-func HomeSlashPath() string {
-	p := HandleHomePath(PATH)
+func homeSlashPath() string {
+	p := handleHomePath(PATH)
 	if p[len(p)-1] != '/' {
 		p += "/"
 	}
 	return p
 }
 
-func ConfigPath() string {
-	return HomeSlashPath() + "config.txt"
+func configPath() string {
+	return homeSlashPath() + "config.txt"
 }

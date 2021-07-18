@@ -8,10 +8,10 @@ import (
 
 // Config is for prompts, controlling fmt.Println colors, and what/when types print
 // function itself just inits / grabs those
-func Configure() string {
+func configure() string {
 
-	path := HomeSlashPath()
-	cf := ConfigPath()
+	path := homeSlashPath()
+	cf := configPath()
 	config, err := os.ReadFile(cf)
 
 	for err != nil { // files don't exist / deleted

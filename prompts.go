@@ -10,7 +10,7 @@ import (
 
 // Exports a string that is unchecked against any args.
 // Pass to a separate function to map cleaner args in passthrough.
-func HandleStringInput(promptstr string) string { // only takes/rds string
+func handleStringInput(promptstr string) string { // only takes/rds string
 	fmt.Print(promptstr + " ")
 	nex, _, e := bufio.NewReader(os.Stdin).ReadLine()
 	for e != nil {
@@ -19,7 +19,7 @@ func HandleStringInput(promptstr string) string { // only takes/rds string
 	return string(nex)
 }
 
-func HandleArguments(promptIcon string) string {
+func handleArguments(promptIcon string) string {
 
 	ptui := promptui.Select{
 		Label: promptIcon,
@@ -35,7 +35,7 @@ func HandleArguments(promptIcon string) string {
 	return tmp
 }
 
-func HandleOptions(promptIcon string, opts []string) string {
+func handleOptions(promptIcon string, opts []string) string {
 
 	ptui := promptui.Select{
 		Label: promptIcon,

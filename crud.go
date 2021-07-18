@@ -12,21 +12,21 @@ import (
 //  |     |  |||   |||
 
 // takes & adds a str input onto a given filetype
-func Add(b Bus) {
+func add(b bus) {
 
-	path := PathGlob(b.FileType)
+	path := pathGlob(b.FileType)
 	datum, _ := os.ReadFile(path)
 
 	data := string(datum)
 
 	fmt.Println("Adding to '" + b.FileType + "':")
-	addLine := HandleStringInput(b.PromptIcon)
+	addLine := handleStringInput(b.PromptIcon)
 	data = data + "\n" + addLine
 	// still needs stuff like for DateTimes and whatnot
 	// based on fileType
 	//
 	os.WriteFile(path, []byte(data), 0644)
-	Done()
+	done()
 }
 
 //  |||| |||   ||||| |||||
@@ -35,20 +35,20 @@ func Add(b Bus) {
 //  |    |   |   |     |
 //  |||| ||||  |||||   |
 
-func Edit(b Bus) {
+func edit(b bus) {
 
-	path := PathGlob(b.FileType)
+	path := pathGlob(b.FileType)
 	datum, _ := os.ReadFile(path)
 
 	icon := b.PromptIcon
 	data := string(datum)
 
 	opts := strings.Split(data, "\n")
-	editedLine := HandleOptions(icon, opts)
+	editedLine := handleOptions(icon, opts)
 	index := indexMatch(editedLine, opts)
 
 	fmt.Println("string selected for edit: " + editedLine + "\nreplace: ")
-	opts[index] = HandleStringInput(icon)
+	opts[index] = handleStringInput(icon)
 
 	writeOut(path, opts)
 }
@@ -61,8 +61,8 @@ func Edit(b Bus) {
 // \-------------------------
 
 // Lists contents of argpath.
-func List(path string, fileType string) {
-	ls, _ := os.ReadFile(PathGlob(fileType))
+func list(path string, fileType string) {
+	ls, _ := os.ReadFile(pathGlob(fileType))
 	contents := string(ls)
 	fmt.Println(contents)
 } // \-----------------------
@@ -72,16 +72,16 @@ func List(path string, fileType string) {
 //  |||   |  |  |    | |
 //  |  |  |     |     |
 
-func Remove(b Bus) {
+func remove(b bus) {
 
-	path := PathGlob(b.FileType)
+	path := pathGlob(b.FileType)
 	datum, _ := os.ReadFile(path)
 
 	icon := b.PromptIcon
 	data := string(datum)
 
 	opts := strings.Split(data, "\n")
-	removedLine := HandleOptions(icon, opts)
+	removedLine := handleOptions(icon, opts)
 	index := indexMatch(removedLine, opts)
 
 	removed := make([]string, len(opts)-1)
@@ -112,10 +112,10 @@ func writeOut(path string, opts []string) {
 	}
 	finalStr = finalStr[:len(finalStr)-1] // cuts off last newline
 	os.WriteFile(path, []byte(finalStr), 0644)
-	Done()
+	done()
 }
 
 //Prints hallelujah amen.
-func Done() {
+func done() {
 	fmt.Println("> Done!")
 }

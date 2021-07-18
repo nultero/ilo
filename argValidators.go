@@ -19,7 +19,7 @@ var ValidKinds = []string{
 	"wishlist",
 }
 
-func iterate(s string, sl []string) bool {
+func _iterate(s string, sl []string) bool {
 	for i := range sl {
 		if s == sl[i] {
 			return true
@@ -28,15 +28,15 @@ func iterate(s string, sl []string) bool {
 	return false
 }
 
-func IsValidFunc(arg string) bool {
-	return iterate(arg, ValidArgs)
+func isValidFunc(arg string) bool {
+	return _iterate(arg, ValidArgs)
 }
 
-func IsValidFileType(arg string) bool {
-	return iterate(arg, ValidKinds)
+func isValidFileType(arg string) bool {
+	return _iterate(arg, ValidKinds)
 }
 
-func IsFlag(arg string) bool {
+func isFlag(arg string) bool {
 	if strings.Contains(arg, "-") {
 		return true
 	}
@@ -44,7 +44,7 @@ func IsFlag(arg string) bool {
 	return false
 }
 
-func IsEmpty(s string) bool {
+func isEmpty(s string) bool {
 	if len(s) == 0 {
 		return true
 	}

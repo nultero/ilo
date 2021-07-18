@@ -12,7 +12,7 @@ const PATH = "~/.nultero/tailbox/"
 
 // I should put the PATH in some kind of init script
 
-type Bus struct {
+type bus struct {
 	PromptIcon string
 	FileType   string
 	Funct      string
@@ -28,10 +28,10 @@ type Bus struct {
 func main() {
 
 	args := os.Args[1:]
-	p, _ := filepath.Abs(HandleHomePath(PATH))
-	config := Configure()
+	p, _ := filepath.Abs(handleHomePath(PATH))
+	config := configure()
 
-	b := Bus{
+	b := bus{
 		PromptIcon: Parser(config, "promptIcon") + " ",
 		FileType:   "",
 		Funct:      "",
@@ -54,57 +54,57 @@ func main() {
 	} else { // if bx is called with args, it will parse args instead of doing its checks
 
 		for i := range args {
-			if IsValidFunc(args[i]) {
-				if IsEmpty(b.Funct) {
+			if isValidFunc(args[i]) {
+				if isEmpty(b.Funct) {
 					b.Funct = args[i]
 				} else {
 					throwDuplArgError(args[i], b.Funct)
 				}
 
-			} else if IsValidFileType(args[i]) {
-				if IsEmpty(b.FileType) {
+			} else if isValidFileType(args[i]) {
+				if isEmpty(b.FileType) {
 					b.FileType = args[i]
 				} else {
 					throwDuplArgError(args[i], b.FileType)
 				}
 
-			} else if IsFlag(args[i]) { // parse flags here
+			} else if isFlag(args[i]) { // parse flags here
 				fmt.Println("parse flags blah blah")
 
 			} else {
 				s := fmt.Sprintf("'%s' is not a valid argument", args[i])
-				fmt.Println(RedError(), s)
+				fmt.Println(redError(), s)
 				os.Exit(1)
 			}
 
 		}
 
-		if IsEmpty(b.Funct) {
-			fmt.Println(RedError(), "no function passed to bx")
+		if isEmpty(b.Funct) {
+			fmt.Println(redError(), "no function passed to bx")
 		}
 
-		if IsEmpty(b.FileType) { // in case of only CRUD arg, prompt is also in bus
+		if isEmpty(b.FileType) { // in case of only CRUD arg, prompt is also in bus
 			promptStr := fmt.Sprintf("%s '%s' needs an argument", b.PromptIcon, b.FileType)
-			b.FileType = HandleArguments(promptStr)
+			b.FileType = handleArguments(promptStr)
 		}
 
 		_eval(b)
 	}
 }
 
-func _eval(b Bus) {
+func _eval(b bus) {
 	switch b.Funct {
 	case "add":
-		Add(b)
+		add(b)
 
 	case "edit":
-		Edit(b)
+		edit(b)
 
 	case "list":
-		List(b.Path, b.FileType)
+		list(b.Path, b.FileType)
 
 	case "remove":
-		Remove(b)
+		remove(b)
 
 	case "test", "home", "config", "help":
 		fmt.Println("poo")
@@ -116,10 +116,10 @@ func _eval(b Bus) {
 
 func throwDuplArgError(this, prevFound string) {
 	fmt.Printf("! >> '%s' found, but already passed '%s' as argument \n", this, prevFound)
-	fmt.Println(RedError(), "cannot have two of the type of argument")
+	fmt.Println(redError(), "cannot have two of the type of argument")
 	os.Exit(1)
 }
 
-func RedError() string {
+func redError() string {
 	return "\033[31;1;4merror:\033[0m"
 }

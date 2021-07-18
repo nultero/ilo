@@ -129,7 +129,7 @@ func colorFmt(numDays int) string {
 
 func readInternals() []string {
 	lastData, _ := os.ReadFile(
-		PathGlob("check"),
+		pathGlob("check"),
 	)
 	return strings.Split(string(lastData), "\n")
 }
@@ -155,7 +155,7 @@ func writeCheckedDay(now string, data []string) {
 	tmp = tmp[:len(tmp)-1]
 
 	os.WriteFile(
-		PathGlob("check"),
+		pathGlob("check"),
 		[]byte(tmp),
 		0644,
 	)
