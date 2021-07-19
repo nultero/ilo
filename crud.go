@@ -20,8 +20,18 @@ func add(b bus) {
 	data := string(datum)
 
 	fmt.Println("Adding to '" + b.FileType + "':")
-	addLine := handleStringInput(b.PromptIcon)
-	data = data + "\n" + addLine
+	s := handleStringInput(b.PromptIcon)
+
+	checks := []string{}
+	if needsInfo(b.FileType) {
+		checks = addInfo(b.PromptIcon)
+	}
+
+	if !isEmpty(checks) {
+		s = fmt.Sprintf("%s @ %s %s", s, checks[0], checks[1])
+	}
+
+	data = data + "\n" + s
 	// still needs stuff like for DateTimes and whatnot
 	// based on fileType
 	//
@@ -48,8 +58,18 @@ func edit(b bus) {
 	index := indexMatch(editedLine, opts)
 
 	fmt.Println("string selected for edit: " + editedLine + "\nreplace: ")
-	opts[index] = handleStringInput(icon)
+	s := handleStringInput(icon)
 
+	checks := []string{}
+	if needsInfo(b.FileType) {
+		checks = addInfo(icon)
+	}
+
+	if !isEmpty(checks) {
+		s = fmt.Sprintf("%s @ %s %s", s, checks[0], checks[1])
+	}
+
+	opts[index] = s
 	writeOut(path, opts)
 }
 
@@ -64,7 +84,12 @@ func edit(b bus) {
 func list(path string, fileType string) {
 	ls, _ := os.ReadFile(pathGlob(fileType))
 	contents := string(ls)
-	fmt.Println(contents)
+
+	if fileType != "events" && fileType != "recurrents" {
+		fmt.Println(contents)
+	} else {
+		cleanPrint(contents)
+	}
 } // \-----------------------
 
 //  |||   |     |  |     |
@@ -118,4 +143,22 @@ func writeOut(path string, opts []string) {
 //Prints hallelujah amen.
 func done() {
 	fmt.Println("> Done!")
+}
+
+func addInfo(p string) []string {
+	d := handleStringInput(p + " day of this event? ")
+	m := handleOptions(p, getMonths())
+
+	return []string{d, m}
+}
+
+func needsInfo(s string) bool {
+	e := "events"
+	r := "recurrents"
+
+	if s == e || s == r {
+		return true
+	}
+
+	return false
 }

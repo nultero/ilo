@@ -3,13 +3,13 @@ _bx() {
     local cur=${COMP_WORDS[COMP_CWORD]}
 
     local STARTOPTS=( "add" "edit" "help" "list" "remove" )
-    local SECONDOPTS=( "alias" "event" "idea" "onetime" "recurrent" "todos" "wishlist" )
+    local SECONDOPTS=( "events" "ideas" "onetimes" "recurrents" "todos" "wishlist" )
     local OPTS
     case $3 in 
     "add" | "edit" | "help" | "list" | "remove")
         OPTS=${SECONDOPTS[*]}
     ;;
-    "event" | "idea" | "onetime" | "recurrent" | "todos" | "wishlist")
+    "events" | "ideas" | "onetimes" | "recurrents" | "todos" | "wishlist")
         OPTS=()
     ;;
     *)

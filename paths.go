@@ -27,7 +27,7 @@ func pathGlob(fileType string) string {
 	case "check", "cache":
 		fileType = "tailbox_cache"
 
-	case "recurrent":
+	case "recurrents":
 		fileType = "recurrent_reminders"
 
 	case "todo":

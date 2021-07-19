@@ -11,7 +11,7 @@ type month struct {
 	days  int
 }
 
-var Months = []month{
+var months = []month{
 	{1, "Jan", 31},
 	{2, "Feb", 28},
 	{3, "Mar", 31},
@@ -28,10 +28,10 @@ var Months = []month{
 
 // Takes a month name string of 3 letters and returns n days. If Feb, will check if leap year or not.
 // ( if I'm still using this on a leap year, I'll be ecstatic. Written 2021 )
-func GetDays(mn string) int {
-	for i := range Months {
-		if Months[i].name == mn {
-			if Months[i].name == "Feb" {
+func getDays(mn string) int {
+	for i := range months {
+		if months[i].name == mn {
+			if months[i].name == "Feb" {
 				var leap int
 				yr, _ := strconv.Atoi(time.Now().Format("2006"))
 				if yr%4 == 0 {
@@ -42,22 +42,30 @@ func GetDays(mn string) int {
 				return leap
 			}
 
-			return Months[i].days
+			return months[i].days
 		}
 	}
 	return 0
 }
 
-func GetNextMonthsDays(mn string) int {
-	for i := range Months {
-		if Months[i].name == mn {
+func getMonths() []string {
+	var mn []string
+	for i := range months {
+		mn = append(mn, months[i].name)
+	}
+	return mn
+}
 
-			nxt_i := Months[i].index + 1
+func getNextMonthsDays(mn string) int {
+	for i := range months {
+		if months[i].name == mn {
+
+			nxt_i := months[i].index + 1
 			if nxt_i == 13 {
 				nxt_i = 1
 			}
 
-			if Months[nxt_i].name == "Feb" {
+			if months[nxt_i].name == "Feb" {
 				var leap int
 				yr, _ := strconv.Atoi(time.Now().Format("2006"))
 				if yr%4 == 0 {
@@ -68,17 +76,17 @@ func GetNextMonthsDays(mn string) int {
 				return leap
 			}
 
-			return Months[nxt_i].days
+			return months[nxt_i].days
 		}
 	}
 	return 0
 }
 
 // Takes month name string of 3 letters, returns the index of that month, starting at 1 for Jan.
-func GetIndex(mn string) int {
-	for i := range Months {
-		if Months[i].name == mn {
-			return Months[i].index
+func getIndex(mn string) int {
+	for i := range months {
+		if months[i].name == mn {
+			return months[i].index
 		}
 	}
 	return 0

@@ -30,7 +30,7 @@ func main() {
 	args := os.Args[1:]
 	p, _ := filepath.Abs(handleHomePath(PATH))
 	config := configure()
-	icon := Parser(config, "promptIcon") + " "
+	icon := parser(config, "promptIcon") + " "
 
 	if len(args) == 0 { // zero args calls checks, prints reminders if within config's threshold, and current date
 		//						  and if already called today, prints cached info
@@ -40,7 +40,7 @@ func main() {
 		month := now.Month().String()[0:3]
 		fmt.Println(icon, month, todaysDate)
 
-		runChecks(month, todaysDate)
+		runChecks(month, todaysDate, config)
 		// check cache if already done today
 		// run new checks if not already run
 
@@ -117,7 +117,7 @@ func _eval(b bus) {
 
 func throwDuplArgError(this, prevFound string) {
 	fmt.Printf("! >> '%s' found, but already passed '%s' as argument \n", this, prevFound)
-	fmt.Println(redError(), "cannot have two of the type of argument")
+	fmt.Println(redError(), "cannot have two of the same type of argument")
 	os.Exit(1)
 }
 

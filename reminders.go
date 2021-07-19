@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // Reminders
@@ -16,15 +15,21 @@ import (
 // Sees if current day has already had checks run, and if not,
 // runs the date against events and recurrent content set up in
 // the bx dir.
-func runChecks(month, today string) {
+func runChecks(month, today, config string) {
+
 	cache := readCache()
 	day := fmt.Sprintf("%s %s", month, today)
 
 	if cacheIsOld(cache[0], day) {
+		advance := getDaysInAdvance(config)
+		checkEvents(day, advance)
+		// checkRecurrents(day, advance)
 		writeCheckedDay(day, []string{})
 
 	} else {
-		fmt.Println(cache)
+		if !isEmpty(cache[1:]) {
+			fmt.Println(cache[1:])
+		}
 	}
 }
 
@@ -36,6 +41,14 @@ func readCache() []string {
 	return strings.Split(string(lastData), "\n")
 }
 
+func getDaysInAdvance(conf string) int {
+	advance, r := strconv.Atoi(parser(conf, "days"))
+	if r != nil {
+		throwErr(r)
+	}
+	return advance
+}
+
 func cacheIsOld(cacheTop, day string) bool {
 	if cacheTop != day {
 		return true
@@ -43,31 +56,38 @@ func cacheIsOld(cacheTop, day string) bool {
 	return false
 }
 
-func checkReminders(now time.Time, month string, daysOut string) {
+func checkEvents(today string, advance int) {
 
-	tdysFmt := now.Format("02 Mon")
-	mn := now.Month().String()[0:3]
+	//
+	// Design for checks:
+	//	> input agnostic -> OR validate the inputs properly
+	//    i.e., "month? day?" amendments to the inputs prompt
+	//
+	//  > the above is easily parseable though, regardless
+	//    the only thing that throws it off is use of ambiguous
+	//    numbering -- "1 12 2021", is that Jan 12th or Dec 1st???
+	//
+	//  > enforce string usage?
+	//
+	//
 
-	// the newline slice at the end seems to be malfunctioning
-	// also a bug in the dates' arithmetic somewhere
+	// if todayHasNotBeenChecked(tdysFmt) {
 
-	if todayHasNotBeenChecked(tdysFmt) {
+	// 	intDays, _ := strconv.Atoi(daysOut)
+	// 	intToday, _ := strconv.Atoi(now.Format("02"))
 
-		intDays, _ := strconv.Atoi(daysOut)
-		intToday, _ := strconv.Atoi(now.Format("02"))
+	// 	recs := checkRecurrents(intToday, intDays, mn)
+	// 	printall(recs)
 
-		recs := checkRecurrents(intToday, intDays, mn)
-		printall(recs)
+	// 	// ots := checkOneTimes(now, month, nDays)
 
-		// ots := checkOneTimes(now, month, nDays)
+	// 	writeCheckedDay(tdysFmt, recs)
 
-		writeCheckedDay(tdysFmt, recs)
-
-	} else {
-		// this is on the already-written file
-		// so skip the date line and just read content
-		printall(readCache()[1:])
-	}
+	// } else {
+	// 	// this is on the already-written file
+	// 	// so skip the date line and just read content
+	// 	printall(readCache()[1:])
+	// }
 }
 
 func printall(data []string) {
@@ -127,7 +147,7 @@ func checkRecurrents(today int, daysOut int, mn string) []string {
 func passesDayCheck(today int, targ int, daysOut int, mn string) bool {
 	var daysWithin int
 	if (targ - today) < 0 {
-		nxtMonths := GetNextMonthsDays(mn)
+		nxtMonths := getNextMonthsDays(mn)
 		daysWithin = (targ + nxtMonths) - today
 	} else {
 		daysWithin = targ - today
