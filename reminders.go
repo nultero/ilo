@@ -5,6 +5,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Reminders
@@ -22,9 +24,9 @@ func runChecks(month, today, config string) {
 
 	if cacheIsOld(cache[0], day) {
 		advance := getDaysInAdvance(config)
-		checkEvents(day, advance)
+		ev := checkEvents(day, advance)
 		// checkRecurrents(day, advance)
-		writeCheckedDay(day, []string{})
+		cacheResults(day, ev)
 
 	} else {
 		if !isEmpty(cache[1:]) {
@@ -46,35 +48,47 @@ func getDaysInAdvance(conf string) int {
 	if r != nil {
 		throwErr(r)
 	}
+
+	if advance < 20 {
+		return advance
+	} else {
+		e := errors.New("invalid number of days in advance")
+		throwErr(e)
+	}
 	return advance
 }
 
 func cacheIsOld(cacheTop, day string) bool {
-	if cacheTop != day {
-		return true
-	}
-	return false
+
+	return true // just for testing
+	// if cacheTop != day {
+	// 	return true
+	// }
+	// return false
 }
 
-func checkEvents(today string, advance int) {
+//  |||||  ||    ||
+//  ||     ||    ||
+//  ||||   ||    ||
+//  ||      ||  ||
+//  |||||     ||
 
-	//
-	// Design for checks:
-	//	> input agnostic -> OR validate the inputs properly
-	//    i.e., "month? day?" amendments to the inputs prompt
-	//
-	//  > the above is easily parseable though, regardless
-	//    the only thing that throws it off is use of ambiguous
-	//    numbering -- "1 12 2021", is that Jan 12th or Dec 1st???
-	//
-	//  > enforce string usage?
-	//
-	//
+func checkEvents(today string, advance int) []string {
 
-	// if todayHasNotBeenChecked(tdysFmt) {
+	ev := []string{}
 
-	// 	intDays, _ := strconv.Atoi(daysOut)
-	// 	intToday, _ := strconv.Atoi(now.Format("02"))
+	c, _ := os.ReadFile(pathGlob("events"))
+	lines := strings.Split(string(c), "\n")
+
+	events, dues := breakAt(lines)
+	days, months := breakDates(dues)
+
+	for i := range events {
+		fmt.Println("i", days[i]+5, "yup", months[i])
+	}
+
+	d, mn := parseDay(today)
+	fmt.Println("tt", d, mn)
 
 	// 	recs := checkRecurrents(intToday, intDays, mn)
 	// 	printall(recs)
@@ -88,12 +102,8 @@ func checkEvents(today string, advance int) {
 	// 	// so skip the date line and just read content
 	// 	printall(readCache()[1:])
 	// }
-}
 
-func printall(data []string) {
-	for i := range data {
-		fmt.Println(data[i])
-	}
+	return ev
 }
 
 //  |||      |||||  |||||
@@ -187,7 +197,7 @@ func todayHasNotBeenChecked(today string) bool {
 	}
 }
 
-func writeCheckedDay(today string, data []string) {
+func cacheResults(today string, data []string) {
 
 	tmp := today + "\n"
 

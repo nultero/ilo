@@ -91,3 +91,7 @@ func getIndex(mn string) int {
 	}
 	return 0
 }
+
+func isInRange() bool {
+	return false
+}

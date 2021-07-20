@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -32,14 +33,7 @@ func parser(txt string, search string) string {
 func cleanPrint(s string) {
 	lines := strings.Split(s, "\n")
 
-	firstHalf := []string{}
-	dates := []string{}
-
-	for i := range lines {
-		ln := strings.Split(lines[i], "@")
-		firstHalf = append(firstHalf, ln[0])
-		dates = append(dates, ln[1])
-	}
+	firstHalf, dates := breakAt(lines)
 
 	mx := maximum(firstHalf)
 
@@ -57,4 +51,46 @@ func maximum(s []string) int {
 		}
 	}
 	return x
+}
+
+func breakAt(lines []string) ([]string, []string) {
+
+	lefts, rights := []string{}, []string{}
+
+	for i := range lines {
+		ln := strings.Split(lines[i], "@")
+		lefts = append(lefts, ln[0])
+		rights = append(rights, ln[1])
+	}
+
+	return lefts, rights
+}
+
+func breakDates(dates []string) ([]int, []string) {
+
+	days, months := []string{}, []string{}
+
+	for i := range dates {
+		ln := strings.TrimSpace(dates[i])
+		s := strings.Split(ln, " ")
+		days = append(days, s[0])
+		months = append(months, s[1])
+	}
+
+	conv := []int{}
+
+	for i := range days {
+		n, _ := strconv.Atoi(days[i])
+		conv = append(conv, n)
+	}
+
+	return conv, months
+}
+
+func parseDay(s string) (int, string) {
+	d := strings.TrimSpace(s)
+	arr := strings.Split(d, " ")
+	n, _ := strconv.Atoi(arr[1])
+
+	return n, arr[0]
 }
