@@ -9,11 +9,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Reminders
-//    -- check list :
-//    -- events
-//    -- recurrent stuff
-
 // Sees if current day has already had checks run, and if not,
 // runs the date against events and recurrent content set up in
 // the bx dir.
@@ -23,10 +18,24 @@ func runChecks(month, today, config string) {
 	day := fmt.Sprintf("%s %s", month, today)
 
 	if cacheIsOld(cache[0], day) {
+
 		advance := getDaysInAdvance(config)
-		ev := checkEvents(day, advance)
-		// checkRecurrents(day, advance)
-		cacheResults(day, ev)
+		// ev := checkEvents(day, "events", advance)
+		// rc := checkEvents(day, "recurrents", advance)
+
+		m := merge(
+			checkEvents(day, "events", advance),
+			checkEvents(day, "recurrents", advance),
+		)
+
+		for k := range ValidMapKeys {
+			if !isEmpty(m[ValidMapKeys[k]]) {
+				fmt.Println(ValidMapKeys[k], "->", m[ValidMapKeys[k]])
+			}
+		}
+		// ev = append(ev, checkEvents("30 Jul", 3)...)
+		// cacheResults(day, ev)
+		// put in autocleaner for events past
 
 	} else {
 		if !isEmpty(cache[1:]) {
@@ -35,6 +44,7 @@ func runChecks(month, today, config string) {
 	}
 }
 
+////////////////////////////
 func readCache() []string {
 	lastData, r := os.ReadFile(pathGlob("check"))
 	if r != nil {
@@ -49,7 +59,7 @@ func getDaysInAdvance(conf string) int {
 		throwErr(r)
 	}
 
-	if advance < 20 {
+	if advance < len(ValidMapKeys) {
 		return advance
 	} else {
 		e := errors.New("invalid number of days in advance")
@@ -65,7 +75,7 @@ func cacheIsOld(cacheTop, day string) bool {
 	// 	return true
 	// }
 	// return false
-}
+} /////////////////////////
 
 //  |||||  ||    ||
 //  ||     ||    ||
@@ -73,128 +83,98 @@ func cacheIsOld(cacheTop, day string) bool {
 //  ||      ||  ||
 //  |||||     ||
 
-func checkEvents(today string, advance int) []string {
+func checkEvents(today, kind string, advance int) map[string]string {
 
-	ev := []string{}
+	ev := map[string]string{}
 
-	c, _ := os.ReadFile(pathGlob("events"))
-	lines := strings.Split(string(c), "\n")
+	data, _ := os.ReadFile(pathGlob(kind))
+	lines := strings.Split(string(data), "\n")
 
 	events, dues := breakAt(lines)
-	days, months := breakDates(dues)
-
-	for i := range events {
-		fmt.Println("i", days[i]+5, "yup", months[i])
-	}
+	keyedEvents := breakDates(dues, events)
 
 	d, mn := parseDay(today)
-	fmt.Println("tt", d, mn)
 
-	// 	recs := checkRecurrents(intToday, intDays, mn)
-	// 	printall(recs)
-
-	// 	// ots := checkOneTimes(now, month, nDays)
-
-	// 	writeCheckedDay(tdysFmt, recs)
-
-	// } else {
-	// 	// this is on the already-written file
-	// 	// so skip the date line and just read content
-	// 	printall(readCache()[1:])
-	// }
+	for i := 0; i <= advance; i++ {
+		if !isEmpty(keyedEvents[d]) {
+			s := preFmt(keyedEvents[d], i)
+			ev[s[0]] += s[1]
+		}
+		d, mn = rollForwardDay(d, mn)
+	}
 
 	return ev
 }
 
-//  |||      |||||  |||||
-//  |||||    ||     ||
-//  || ||    ||||   ||
-//  ||  ||   ||     ||
-//  ||   ||  |||||  |||||
+func merge(ev, rc map[string]string) map[string]string {
 
-func checkRecurrents(today int, daysOut int, mn string) []string {
+	m := map[string]string{}
 
-	recs, _ := os.ReadFile("recurrent")
-	recArray := strings.Split(
-		string(recs), "\n",
-	)
+	for k, v := range ev {
+		m[k] = v
+	}
 
-	var targetStrings []string
-
-	for ln := range recArray {
-		atSplt := strings.Split(recArray[ln], "@")
-
-		for i := range atSplt {
-
-			splLine := strings.TrimSpace(atSplt[i])
-			day, er := strconv.Atoi(splLine)
-
-			if er == nil {
-
-				daysWithin := day - today
-
-				if passesDayCheck(today, day, daysOut, mn) {
-
-					formatStr := " >> "
-					// still have to fix in case of negative
-					formatStr += colorFmt(daysWithin)
-
-					tmp := strings.TrimSpace(atSplt[0]) + formatStr
-					targetStrings = append(targetStrings, tmp)
-
-				}
-
-			}
+	for k, v := range rc {
+		if !isEmpty(m[k]) {
+			// fmt.Println("testing out how to colorate from k", k)
+			m[k] += colorate(v, []int{100, 170, 200})
 		}
 	}
 
-	return targetStrings
+	for k, v := range m {
+		m[k] = prettify(v)
+	}
+
+	return m
 }
 
-// Logic for the case where the target day being checked against is a low number, like the 1st
-// of a month, and the current day is the 30th or so -- the original code didn't "wraparound".
-// This handles the overall threshold of days for both recurrents and one-time checks.
-func passesDayCheck(today int, targ int, daysOut int, mn string) bool {
-	var daysWithin int
-	if (targ - today) < 0 {
-		nxtMonths := getNextMonthsDays(mn)
-		daysWithin = (targ + nxtMonths) - today
-	} else {
-		daysWithin = targ - today
-	}
-
-	if daysWithin <= daysOut {
-		return true
-	} else {
-		return false
-	}
+func preFmt(data string, numDays int) []string {
+	return []string{colorFmt(numDays), data}
 }
 
 func colorFmt(numDays int) string {
-	tmp := ""
+	var tmp string
 	switch numDays {
 	case 0:
-		tmp += "\033[1;31m" + "today" + "\033[0m"
+		tmp = "\033[1;31m" + "today" + "\033[0m"
 
 	case 1:
-		tmp += "\033[1;33m" + "1 day" + "\033[0m"
+		tmp = "\033[1;33m" + "1 day" + "\033[0m"
 
 	case 2:
-		tmp += fmt.Sprintf("\033[1;32m%v days\033[0m", numDays)
+		tmp = fmt.Sprintf("\033[1;32m%v days\033[0m", numDays)
 
 	default:
-		tmp += fmt.Sprintf("\033[1;36m%v days\033[0m", numDays)
+		tmp = fmt.Sprintf("\033[1;36m%v days\033[0m", numDays)
 	}
 	return tmp
 }
 
-func todayHasNotBeenChecked(today string) bool {
-	lastDay := readCache()[0]
-	if lastDay == today {
-		return false
-	} else {
-		return true
+func colorate(s string, colorsRGB []int) string {
+
+	c := []string{}
+	for i := range colorsRGB {
+		c = append(c,
+			strconv.Itoa(colorsRGB[i]),
+		)
 	}
+
+	return fmt.Sprintf("\033[38;2;%s;%s;%sm%s\033[0m", c[0], c[1], c[2], s)
+}
+
+func prettify(s string) string {
+	tmp := ""
+	line := strings.Split(s, "<:>")
+
+	for i := range line {
+		s := strings.TrimSpace(line[i])
+		tmp += s + ", "
+	}
+
+	// shaves off the comma / space
+	tmp = strings.TrimSpace(tmp)
+	tmp = string(tmp[:len(tmp)-3])
+	return tmp
 }
 
 func cacheResults(today string, data []string) {

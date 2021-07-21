@@ -66,15 +66,14 @@ func breakAt(lines []string) ([]string, []string) {
 	return lefts, rights
 }
 
-func breakDates(dates []string) ([]int, []string) {
+func breakDates(dates, events []string) map[int]string {
 
-	days, months := []string{}, []string{}
+	days := []string{}
 
 	for i := range dates {
 		ln := strings.TrimSpace(dates[i])
 		s := strings.Split(ln, " ")
 		days = append(days, s[0])
-		months = append(months, s[1])
 	}
 
 	conv := []int{}
@@ -84,7 +83,13 @@ func breakDates(dates []string) ([]int, []string) {
 		conv = append(conv, n)
 	}
 
-	return conv, months
+	keyedEvents := map[int]string{}
+
+	for i := range conv {
+		keyedEvents[conv[i]] += events[i] + "<:>"
+	}
+
+	return keyedEvents
 }
 
 func parseDay(s string) (int, string) {
