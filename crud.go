@@ -70,7 +70,7 @@ func edit(b bus) {
 	}
 
 	opts[index] = s
-	writeOut(path, opts)
+	writeOut(path, opts, true)
 }
 
 //  ||   ||| |||| |||
@@ -113,7 +113,7 @@ func remove(b bus) {
 
 	//writing common elements to altOpts, skipping index to rmv
 	removed = append(opts[:index], opts[index+1:]...)
-	writeOut(path, removed)
+	writeOut(path, removed, true)
 }
 
 // Common to Edit() and Remove(). Grabs index for writing to the spot in opts[] arg.
@@ -130,14 +130,17 @@ func indexMatch(strMatch string, opts []string) int {
 // Final string export for both Edit() and Remove(). Iterates
 // over their string arrays and adds newlines to zip the split seam
 // from the original pass-in that makes Opts[].
-func writeOut(path string, opts []string) {
+func writeOut(path string, opts []string, printDone bool) {
 	finalStr := ""
 	for i := 0; i < len(opts); i++ {
 		finalStr += opts[i] + "\n"
 	}
 	finalStr = finalStr[:len(finalStr)-1] // cuts off last newline
 	os.WriteFile(path, []byte(finalStr), 0644)
-	done()
+
+	if printDone {
+		done()
+	}
 }
 
 //Prints hallelujah amen.

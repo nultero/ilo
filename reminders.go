@@ -95,6 +95,21 @@ func checkEvents(today, kind string, advance int) map[string]string {
 
 	d, mn := parseDay(today)
 
+	// autocleaner
+	if kind == "events" {
+		for i := range dues {
+			r := strings.TrimSpace(dues[i])
+			s := strings.Split(r, " ")
+			day, _ := strconv.Atoi(s[0])
+
+			if s[1] == mn { //same month
+				if day < d { //if previous day of same month
+					autoclean(i) // needs a rollback function actually
+				} // work off of both day-based rollback, and cache rolledback stuff
+			} //    so none of it is ever "lost"
+		}
+	}
+
 	for i := 0; i <= advance; i++ {
 		if !isEmpty(keyedEvents[d]) {
 			s := preFmt(keyedEvents[d], i)
@@ -193,4 +208,13 @@ func cacheResults(today string, data []string) {
 		[]byte(tmp),
 		0644,
 	)
+}
+
+func autoclean(index int) {
+	p := pathGlob("events")
+	f, _ := os.ReadFile(p)
+	lines := strings.Split(string(f), "\n")
+	cleaned := make([]string, len(lines)-1)
+	cleaned = append(lines[:index], lines[index+1:]...)
+	writeOut(p, cleaned, false)
 }
