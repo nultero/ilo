@@ -35,6 +35,15 @@ func rollForwardDay(d int, mn string) (int, string) {
 	return d, mn
 }
 
+func rollBackDay(d int, mn string) (int, string) {
+	d--
+	if d < 1 {
+		mn = getPrevMonth(mn)
+		d = getDays(mn)
+	}
+	return d, mn
+}
+
 // Takes a month name string of 3 letters and returns n days. If Feb, will check if leap year or not.
 // ( if I'm still using this on a leap year, I'll be ecstatic. Written 2021 )
 func getDays(mn string) int {
@@ -63,6 +72,17 @@ func getMonths() []string {
 		mn = append(mn, months[i].name)
 	}
 	return mn
+}
+
+func getPrevMonth(mn string) string {
+	i := getIndex(mn)
+	if i-1 == 0 {
+		i = 12
+	} else {
+		i = i - 1
+	}
+
+	return months[i].name
 }
 
 func getNextMonth(mn string) string {

@@ -20,26 +20,30 @@ func runChecks(month, today, config string) {
 	if cacheIsOld(cache[0], day) {
 
 		advance := getDaysInAdvance(config)
-		// ev := checkEvents(day, "events", advance)
-		// rc := checkEvents(day, "recurrents", advance)
 
 		m := merge(
 			checkEvents(day, "events", advance),
 			checkEvents(day, "recurrents", advance),
 		)
 
+		vals := []string{day}
+
 		for k := range ValidMapKeys {
 			if !isEmpty(m[ValidMapKeys[k]]) {
-				fmt.Println(ValidMapKeys[k], "->", m[ValidMapKeys[k]])
+				s := ValidMapKeys[k] + " -> " + m[ValidMapKeys[k]]
+				fmt.Println(s)
+				vals = append(vals, s)
 			}
 		}
-		// ev = append(ev, checkEvents("30 Jul", 3)...)
-		// cacheResults(day, ev)
-		// put in autocleaner for events past
+
+		cacheResults(vals)
 
 	} else {
-		if !isEmpty(cache[1:]) {
-			fmt.Println(cache[1:])
+		c := cache[1:]
+		if !isEmpty(c) {
+			for i := range c {
+				fmt.Println(c[i])
+			}
 		}
 	}
 }
@@ -69,12 +73,10 @@ func getDaysInAdvance(conf string) int {
 }
 
 func cacheIsOld(cacheTop, day string) bool {
-
-	return true // just for testing
-	// if cacheTop != day {
-	// 	return true
-	// }
-	// return false
+	if cacheTop != day {
+		return true
+	}
+	return false
 } /////////////////////////
 
 //  |||||  ||    ||
@@ -83,11 +85,11 @@ func cacheIsOld(cacheTop, day string) bool {
 //  ||      ||  ||
 //  |||||     ||
 
-func checkEvents(today, kind string, advance int) map[string]string {
+func checkEvents(today, funcType string, advance int) map[string]string {
 
 	ev := map[string]string{}
 
-	data, _ := os.ReadFile(pathGlob(kind))
+	data, _ := os.ReadFile(pathGlob(funcType))
 	lines := strings.Split(string(data), "\n")
 
 	events, dues := breakAt(lines)
@@ -95,20 +97,30 @@ func checkEvents(today, kind string, advance int) map[string]string {
 
 	d, mn := parseDay(today)
 
-	// autocleaner
-	if kind == "events" {
+	// autocleaner logic for nonrecurrent events
+	if funcType == "events" {
+
+		adv := -1 * advance
+
 		for i := range dues {
+
 			r := strings.TrimSpace(dues[i])
 			s := strings.Split(r, " ")
 			day, _ := strconv.Atoi(s[0])
 
-			if s[1] == mn { //same month
-				if day < d { //if previous day of same month
-					autoclean(i) // needs a rollback function actually
-				} // work off of both day-based rollback, and cache rolledback stuff
-			} //    so none of it is ever "lost"
+			_d, _mn := d, mn // reset daycheck vars per item in range
+
+			for _i := 0; _i >= adv; _i-- {
+				_d, _mn = rollBackDay(_d, _mn)
+
+				if s[1] == _mn { // matches month, and then day-based
+					if day == _d { // on rollback
+						autoclean(i)
+					}
+				}
+			}
 		}
-	}
+	} //// end autocleaner
 
 	for i := 0; i <= advance; i++ {
 		if !isEmpty(keyedEvents[d]) {
@@ -131,7 +143,6 @@ func merge(ev, rc map[string]string) map[string]string {
 
 	for k, v := range rc {
 		if !isEmpty(m[k]) {
-			// fmt.Println("testing out how to colorate from k", k)
 			m[k] += colorate(v, []int{100, 170, 200})
 		}
 	}
@@ -180,6 +191,7 @@ func colorate(s string, colorsRGB []int) string {
 func prettify(s string) string {
 	tmp := ""
 	line := strings.Split(s, "<:>")
+	line = line[:len(line)-1]
 
 	for i := range line {
 		s := strings.TrimSpace(line[i])
@@ -188,14 +200,13 @@ func prettify(s string) string {
 
 	// shaves off the comma / space
 	tmp = strings.TrimSpace(tmp)
-	tmp = string(tmp[:len(tmp)-3])
+	tmp = string(tmp[:len(tmp)-1])
 	return tmp
 }
 
-func cacheResults(today string, data []string) {
+func cacheResults(data []string) {
 
-	tmp := today + "\n"
-
+	tmp := ""
 	for i := range data {
 		tmp += data[i] + "\n"
 	}
@@ -217,4 +228,7 @@ func autoclean(index int) {
 	cleaned := make([]string, len(lines)-1)
 	cleaned = append(lines[:index], lines[index+1:]...)
 	writeOut(p, cleaned, false)
+
+	s := colorate("** bx's autoclean has run", []int{90, 210, 110})
+	fmt.Println(s)
 }
