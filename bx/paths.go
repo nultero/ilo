@@ -1,12 +1,22 @@
-package main
+package bx
 
 import (
+	"bx/errs"
 	"os"
 	"path/filepath"
 )
 
+func CheckPath(path string) string {
+	return path
+}
+
 func getHome() string {
-	home, _ := os.UserHomeDir()
+	home, err := os.UserHomeDir()
+
+	if err != nil {
+		errs.ThrowX(err)
+	}
+
 	return home
 }
 
@@ -21,7 +31,7 @@ func handleHomePath(p string) string {
 	return rebuiltPath
 }
 
-func pathGlob(fileType string) string {
+func pathGlob(fileType, path string) string {
 	switch fileType {
 
 	case "check", "cache":
@@ -35,21 +45,21 @@ func pathGlob(fileType string) string {
 
 	}
 
-	h := handleHomePath(PATH)
+	h := handleHomePath(path)
 	p, _ := filepath.Abs(
 		string(h + fileType + ".txt"),
 	)
 	return p
 }
 
-func homeSlashPath() string {
-	p := handleHomePath(PATH)
+func homeSlashPath(path string) string {
+	p := handleHomePath(path)
 	if p[len(p)-1] != '/' {
 		p += "/"
 	}
 	return p
 }
 
-func configPath() string {
-	return homeSlashPath() + "config.txt"
-}
+// func configPath() string {
+// 	return homeSlashPath() + "config.txt"
+// }

@@ -21,7 +21,6 @@ $  bx       |  add     |\
             |                  | * cron      --> intended for simple cron jobs, might be future chunk feature for myself
             |
             |   FLAGS
-            |  defaults  |  -d      --> first argument, helps to change defaults from interface
+            |  filter    |  -f      --> filters results from e.g. the file being pulled from
             |  help      |  -h      --> goes anywhere, prints help if called with function, or just prints all CLI API args' helps
             |  home      |  -dir    --> maybe easy migrate all of bx's stuff?
-            |  conf      | -c, --conf

@@ -1,12 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // Sees if current day has already had checks run, and if not,

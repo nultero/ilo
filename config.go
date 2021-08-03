@@ -8,7 +8,7 @@ import (
 
 // Config is for prompts, controlling fmt.Println colors, and what/when types print
 // function itself just inits / grabs those
-func configure() string {
+func config() (string, string) {
 
 	path := homeSlashPath()
 	cf := configPath()

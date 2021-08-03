@@ -2,14 +2,14 @@ _bx() {
     COMPREPLY=()
     local cur=${COMP_WORDS[COMP_CWORD]}
 
-    local STARTOPTS=( "add" "edit" "help" "list" "remove" )
-    local SECONDOPTS=( "events" "ideas" "onetimes" "recurrents" "todos" "wishlist" )
+    local STARTOPTS=( "add" "edit" "filter" "help" "list" "remove" )
+    local SECONDOPTS=( "events" "ideas" "recurrents" "todos" "wishlist" )
     local OPTS
     case $3 in 
     "add" | "edit" | "help" | "list" | "remove")
         OPTS=${SECONDOPTS[*]}
     ;;
-    "events" | "ideas" | "onetimes" | "recurrents" | "todos" | "wishlist")
+    "events" | "ideas" | "recurrents" | "todos" | "wishlist")
         OPTS=()
     ;;
     *)
