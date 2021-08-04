@@ -25,9 +25,9 @@ func getHomeDir() string {
 	return home
 }
 
-func pathGlob(fileType string) string {
+func glob(fileType string) string {
 	switch fileType {
-	case "check", "cache":
+	case "cache":
 		fileType = "tailbox_cache"
 
 	case "recurrents":

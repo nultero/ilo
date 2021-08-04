@@ -21,6 +21,8 @@ func Ok(path string) (string, string) {
 
 	if parseErr != nil {
 		errs.ThrowSys(parseErr)
+	} else {
+		icon += " "
 	}
 
 	return icon, p

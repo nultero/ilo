@@ -48,13 +48,6 @@ package main
 // }
 
 // ////////////////////////////
-// func readCache() []string {
-// 	lastData, r := os.ReadFile(pathGlob("check"))
-// 	if r != nil {
-// 		throwErr(r)
-// 	}
-// 	return strings.Split(string(lastData), "\n")
-// }
 
 // func getDaysInAdvance(conf string) int {
 // 	advance, r := strconv.Atoi(parser(conf, "days"))
@@ -70,21 +63,6 @@ package main
 // 	}
 // 	return advance
 // }
-
-// func cacheIsOld(cacheTop, day string) bool {
-// 	if cacheTop != day {
-// 		return true
-// 	}
-
-// 	c, _ := os.Stat(pathGlob("cache"))
-// 	e, _ := os.Stat(pathGlob("events"))
-
-// 	ct := c.ModTime()
-// 	et := e.ModTime()
-
-// 	if ct.Before(et) {
-// 		return true
-// 	}
 
 // 	r, _ := os.Stat(pathGlob("recurrents"))
 // 	rt := r.ModTime()

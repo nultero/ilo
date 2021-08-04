@@ -24,7 +24,7 @@ func main() {
 	args := os.Args[1:]
 
 	if len(args) == 0 {
-		bx.RunReminders()
+		bx.RunReminders(p, icon, config)
 
 	} else {
 
