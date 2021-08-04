@@ -5,10 +5,19 @@ import (
 	"os"
 )
 
-func ThrowX(r error) {
-	s := fmt.Sprintf("%s %s", redError(), r)
+func quit(s string) {
 	fmt.Println(s)
 	os.Exit(1)
+}
+
+func ThrowX(err error, desc string) {
+	s := fmt.Sprintf("%s %s \n >> %s", redError(), err, desc)
+	quit(s)
+}
+
+func ThrowSys(err error) {
+	s := fmt.Sprintf("%s %s", redError(), err)
+	quit(s)
 }
 
 func throwDuplArgError(this, prevFound string) {

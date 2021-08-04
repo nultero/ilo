@@ -2,11 +2,10 @@ package main
 
 import (
 	"bx/bx"
-	"fmt"
+	"bx/conf"
 	"os"
 )
 
-// bx's PATH should be, for instance:
 const PATH = "~/.nultero/tailbox/"
 
 //  ||
@@ -16,22 +15,22 @@ const PATH = "~/.nultero/tailbox/"
 
 func main() {
 
-	p := bx.CheckPath(PATH) // ^ verifies the above const, expands, etc.
-	icon, conf := config(p)
+	p := bx.BxPath(PATH) // ^ verifies the above const, expands, etc.
+	icon, config := conf.Ok(p)
+
+	// still have to double check config
+	// but mostly cleaner than it was before
 
 	args := os.Args[1:]
-	// p, _ := filepath.Abs(handleHomePath(PATH))
-	// config := configure()
-	// icon := parser(config, "promptIcon") + " "
 
 	if len(args) == 0 {
 		bx.RunReminders()
 
 	} else {
 
-		b := bx.DefaultBus(icon, p)
+		// b := bx.DefaultBus(icon, p)
 
-		fmt.Println(b)
+		// fmt.Println(b)
 
 	}
 }
