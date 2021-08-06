@@ -1,12 +1,14 @@
 package bx
 
 import (
+	"bx/errs"
 	"fmt"
+	"os"
 	"time"
 )
 
 // Checks bx's events cache -- if old, re-runs reminder calculations,
-// if not old, will just print the date with whatever icon is present in config.
+// if not old, prints the date with whatever is in the cache.
 func RunReminders(path, icon, config string) {
 
 	now := time.Now()
@@ -15,12 +17,14 @@ func RunReminders(path, icon, config string) {
 
 	fmt.Println(icon, month, today)
 
-	///// run checks
 	cache := readCache(path)
 
 	if cacheIsOld(cache[0], today, path) {
 
-		fmt.Println("donkey sauce")
+		nDays := getNumDaysAhead(config)
+		items := doChecks(nDays, today, month, path)
+		fmt.Println(len(items))
+		// cacheResults(today, items)
 
 	} else {
 		c := cache[1:]
@@ -31,3 +35,30 @@ func RunReminders(path, icon, config string) {
 		}
 	}
 }
+
+func doChecks(nDays int, today, month, path string) []string {
+	chx := []string{"events", "recurrents"}
+
+	for i := range chx {
+
+		p := path + glob(chx[i])
+		f, r := os.ReadFile(p)
+		if r != nil {
+			errs.ThrowX(r, fmt.Sprintf("error with the bx file at '%s'", p))
+		}
+
+		if chx[i] == "events" { // autocleaner logic
+
+			rev := -1 * nDays // flips to behind current day
+			
+
+		}
+		
+
+		fmt.Println(string(f))
+	}
+
+	return chx
+}
+
+func 

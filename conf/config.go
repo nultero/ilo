@@ -38,7 +38,7 @@ func Ok(path string) (string, string) {
 
 // 	for err != nil { // files don't exist / deleted
 
-// 		prompt := "❯➤ " // default
+// 		prompt := "" // default
 
 // 		// user confirms dir  / not making sys changes w/out input
 // 		confNotFound(path, prompt)

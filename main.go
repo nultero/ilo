@@ -21,6 +21,9 @@ func main() {
 	// still have to double check config
 	// but mostly cleaner than it was before
 
+	// the ux for adding things is extremely unclear
+	// color the parts being editing for focus etc.
+
 	args := os.Args[1:]
 
 	if len(args) == 0 {

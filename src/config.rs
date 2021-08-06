@@ -15,6 +15,13 @@ const FILES: [&str; 7] = [
     "wishlist.txt",
 ];
 
+const DEFAULT_CONF_LINES: [&str; 4]  = [
+    "todoSymbol = ○",
+    "prompt_icon = ❯➤",
+    "# days ahead to check for",
+    "days = 3",
+];
+
 pub fn set_up_conf(path: &str) {
 
     let p = paths::exp_const_path(path);
@@ -26,10 +33,24 @@ pub fn set_up_conf(path: &str) {
         println!("{} created dir {}", col::bx_print(), &p.to_string());
 
         for f in FILES.iter() {
+
             let mut fp = p.to_owned();
             fp.push_str(f);
             let fp = Path::new(&fp);
-            let w = fs::write(fp, "");
+
+            let mut output = String::from("");
+
+            if f == &"config.txt" {
+                for line in &DEFAULT_CONF_LINES {
+                    output.push_str(&line);
+                    output.push_str(&"\n");
+                }
+                // slice last newline off
+                let tmp = &output[..output.len() - 1];
+                output = tmp.to_owned();
+            }
+            
+            let w = fs::write(fp, output);
             
             if w.is_ok() {
                 println!("{} created file {}", col::bx_print(), fp.to_str().unwrap());

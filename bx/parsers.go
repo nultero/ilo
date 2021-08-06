@@ -1,8 +1,10 @@
 package bx
 
 import (
+	"bx/errs"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -35,7 +37,22 @@ func ParseString(txt, search string) (string, error) {
 	return "", errors.New(s)
 }
 
-// Takes a str or slice of strs as inputs, checks what it says.
+func getNumDaysAhead(conf string) int {
+
+	days, err := ParseString(conf, "days")
+	if err != nil {
+		errs.ThrowX(err, "'days' setting not found / not properly configured in bx files")
+	}
+
+	numDays, nErr := strconv.Atoi(days)
+	if nErr != nil {
+		errs.ThrowSys(nErr)
+	}
+
+	return numDays
+}
+
+// Takes a str or slice of strs as inputs.
 func IsEmpty(s interface{}) bool {
 
 	t, ok := s.(string)

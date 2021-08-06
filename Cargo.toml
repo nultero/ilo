@@ -7,4 +7,5 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.2.16"
+crossterm = "0.17.7"
 dirs = "3.0.2"

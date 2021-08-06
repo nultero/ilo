@@ -64,14 +64,6 @@ package main
 // 	return advance
 // }
 
-// 	r, _ := os.Stat(pathGlob("recurrents"))
-// 	rt := r.ModTime()
-
-// 	if ct.Before(rt) {
-// 		return true
-// 	}
-
-// 	return false
 // } /////////////////////////
 
 // //  |||||  ||    ||
