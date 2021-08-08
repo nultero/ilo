@@ -15,7 +15,7 @@ const FILES: [&str; 7] = [
     "wishlist.txt",
 ];
 
-const DEFAULT_CONF_LINES: [&str; 4]  = [
+const DEFAULT_CONF_LINES: [&'static str; 4]  = [
     "todoSymbol = ○",
     "prompt_icon = ❯➤",
     "# days ahead to check for",
@@ -24,7 +24,7 @@ const DEFAULT_CONF_LINES: [&str; 4]  = [
 
 pub fn set_up_conf(path: &str) {
 
-    let p = paths::exp_const_path(path);
+    let p = paths::expand_const_path(path);
     let res = fs::create_dir(&p); 
 
     if res.is_ok() {
@@ -56,11 +56,11 @@ pub fn set_up_conf(path: &str) {
                 println!("{} created file {}", col::bx_print(), fp.to_str().unwrap());
 
             } else {
-                errs::sys_err(w.err().unwrap())
+                errs::api::sys_err(w.err().unwrap())
             }
         }
 
     } else {
-        errs::sys_err(res.err().unwrap());
+        errs::api::sys_err(res.err().unwrap());
     }
 }

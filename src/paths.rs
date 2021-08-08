@@ -6,7 +6,7 @@ use dirs::home_dir;
 use std::path;
 use std::io;
 
-pub fn exp_const_path(p: &str) -> String {
+pub fn expand_const_path(p: &str) -> String {
     
     let mut p = p.to_owned();
 
@@ -27,7 +27,7 @@ pub fn exp_const_path(p: &str) -> String {
 
 pub fn bx_path(p: &str) -> Result<String, io::Error> {
 
-    let p = exp_const_path(p);
+    let p = expand_const_path(p);
     let p = path::Path::new(&p).canonicalize()?;
     let p = p.to_str().unwrap();
 

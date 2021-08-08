@@ -1,7 +1,10 @@
+use crate::argparser::Bus;
+
+pub fn exec_func(b: Bus) {
 
 
-pub fn exec_func() {
 
-    println!("donk");
+    println!("bfunc {}", b.func);
+    println!("bfiletype {}", b.file_type);
 
 }

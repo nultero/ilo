@@ -2,12 +2,12 @@ use crate::errs;
 use crate::funcs;
 
 #[allow(dead_code)]
-struct Bus {
-    prompt_icon:    String,
-	file_type:      String,
-	func:           String,
-	path:           String,
-	help:           bool,
+pub struct Bus {
+    pub prompt_icon:    String,
+	pub file_type:      String,
+	pub func:           String,
+	pub path:           String,
+	pub help:           bool,
 }
 
 #[allow(dead_code)]
@@ -31,7 +31,7 @@ impl Bus {
     }
 }
 
-const VAL_FUNCS: [&str; 6] = [
+const VAL_FUNCS: [&'static str; 6] = [
     "add",
     "edit",
     "filter",
@@ -40,7 +40,7 @@ const VAL_FUNCS: [&str; 6] = [
     "remove",
 ];
 
-const VAL_DOCS: [&str; 5] = [
+const VAL_DOCS: [&'static str; 5] = [
 	"events",
 	"ideas",
 	"recurrents",
@@ -62,27 +62,48 @@ pub fn parse_args(args: &Vec<String>, path: &str) {
                 b.func = r.to_string();
             } else {
                 let e = format!("args '{}' and '{}' conflict", b.func, r);
-                errs::crit_err(&e);
+                errs::api::crit_err(&e);
             }
-            continue;
-        }
 
-        if VAL_DOCS.contains(s) {
+
+        } else if VAL_DOCS.contains(s) {
             if b.file_type.len() == 0 {
                 b.file_type = r.to_string();
             } else {
                 let e = format!("filetypes '{}' and '{}' conflict", b.file_type, r);
-                errs::crit_err(&e);
+                errs::api::crit_err(&e);
             }
-            continue;
+
+
+        } else if s.contains("-") {
+            println!("gotta do a flag parse here");
+            
+            
+        } else if s == &"help" {
+            b.help = true;
+            
+
+        } else {
+            let s = format!("unrecognized arg '{}'", s);
+            errs::api::crit_err(&s);
         }
 
-        if s.contains("-") {
-            println!("gotta do a flag parse here");
-        }
     } // end argparse loop
 
+    if bus_is_valid(&b) {
+        funcs::exec_func(b);
 
-    funcs::exec_func();
+    } else {
+        println!("gooch");
+    }
+}
 
+fn bus_is_valid(b: &Bus) -> bool {
+
+    let boolean = b.func.len() * b.file_type.len();
+    if boolean != 0 {
+        return true;
+    }
+
+    return false;
 }

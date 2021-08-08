@@ -1,22 +1,23 @@
 extern crate chrono;
 extern crate dirs;
 
-mod colors {
-    pub mod col;
+mod bx {
+    pub mod reminders;
+    pub mod timeline;
 }
+mod colors {  pub mod col;  }
+mod errs {  pub mod api;  }
 mod config;
-mod errs;
 mod funcs;
-mod parsers;
+mod argparser;
 mod paths;
 mod prompts;
 
 use std::env;
+use bx::reminders;
 use colors::col;
 
-#[allow(dead_code)]
-
-const PATH: &str = "~/.tailbox/";
+const PATH: &'static str = "~/.tailbox/";
 
 fn main() {
 
@@ -30,17 +31,17 @@ fn main() {
 
         if args.len() == 0 {
             
-            println!("crunk -> {}", path);
+            reminders::run_reminders(&path);
             
             
         } else {
-            parsers::parse_args(&args, &path);
+            argparser::parse_args(&args, &path);
         }
 
     } else {
 
         let s = format!("path '{}' was not able to be expanded or does not exist", col::blue(&PATH));
-        errs::basic_err(&s);
+        errs::api::basic_err(&s);
 
         let prmpt = prompts::red_setup_prompt();
         let answer = prompts::get_answer(&prmpt);
