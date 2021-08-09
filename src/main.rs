@@ -4,13 +4,14 @@ extern crate dirs;
 mod bx {
     pub mod reminders;
     pub mod timeline;
+    pub mod settingparser;
 }
 mod colors {  pub mod col;  }
 mod errs {  pub mod api;  }
+mod pathutils { pub mod paths; }
+mod argparser;
 mod config;
 mod funcs;
-mod argparser;
-mod paths;
 mod prompts;
 
 use std::env;
@@ -23,7 +24,7 @@ fn main() {
 
     let args: Vec<String> = env::args().skip(1).collect();
 
-    let path = paths::bx_path(PATH);
+    let path = pathutils::paths::bx_path(PATH);
 
     if path.is_ok() {
 

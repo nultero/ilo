@@ -2,7 +2,7 @@
 use std::fs;
 use std::path::Path;
 use crate::colors::col;
-use crate::paths;
+use crate::pathutils::paths;
 use crate::errs;
 
 const FILES: [&str; 7] = [

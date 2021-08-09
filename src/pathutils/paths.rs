@@ -1,4 +1,3 @@
-#[allow(dead_code)]
 
 // use std::result;
 // use std::fs;
@@ -32,4 +31,11 @@ pub fn bx_path(p: &str) -> Result<String, io::Error> {
     let p = p.to_str().unwrap();
 
     return Ok(p.to_owned());
+}
+
+pub fn get_file(filetype: &str) -> &str {
+    match filetype {
+        "conf"      => "/config.txt",
+        _           => ""
+    }
 }
