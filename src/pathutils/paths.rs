@@ -32,6 +32,7 @@ pub fn bx_path(p: &str) -> Result<String, io::Error> {
 pub fn get_file(filetype: &str) -> &str {
     match filetype {
         "conf" => "/config.txt",
+        "cache" => "/cache.txt",
         _ => "",
     }
 }
