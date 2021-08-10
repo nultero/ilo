@@ -1,6 +1,5 @@
-
-use std::io::{stdin, stdout};
 use std::io::Write;
+use std::io::{stdin, stdout};
 
 use crate::colors::col;
 
@@ -11,11 +10,10 @@ pub fn confirmed(answer: &str) -> bool {
 }
 
 pub fn get_answer(prompt: &str) -> String {
-    
     let mut out = stdout();
     out.write(&prompt.as_bytes()).unwrap();
     out.flush().unwrap();
-    
+
     let mut s: String = "".to_owned();
     stdin().read_line(&mut s).unwrap();
     return s;

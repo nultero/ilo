@@ -1,9 +1,8 @@
-
+use crate::colors::col;
+use crate::errs;
+use crate::pathutils::paths;
 use std::fs;
 use std::path::Path;
-use crate::colors::col;
-use crate::pathutils::paths;
-use crate::errs;
 
 const FILES: [&str; 7] = [
     "cache.txt",
@@ -15,7 +14,7 @@ const FILES: [&str; 7] = [
     "wishlist.txt",
 ];
 
-const DEFAULT_CONF_LINES: [&'static str; 4]  = [
+const DEFAULT_CONF_LINES: [&'static str; 4] = [
     "todoSymbol = ○",
     "prompt_icon = ❯➤",
     "# days ahead to check for",
@@ -23,17 +22,14 @@ const DEFAULT_CONF_LINES: [&'static str; 4]  = [
 ];
 
 pub fn set_up_conf(path: &str) {
-
     let p = paths::expand_const_path(path);
-    let res = fs::create_dir(&p); 
+    let res = fs::create_dir(&p);
 
     if res.is_ok() {
-
         res.unwrap();
         println!("{} created dir {}", col::bx_print(), &p.to_string());
 
         for f in FILES.iter() {
-
             let mut fp = p.to_owned();
             fp.push_str(f);
             let fp = Path::new(&fp);
@@ -49,17 +45,15 @@ pub fn set_up_conf(path: &str) {
                 let tmp = &output[..output.len() - 1];
                 output = tmp.to_owned();
             }
-            
+
             let w = fs::write(fp, output);
-            
+
             if w.is_ok() {
                 println!("{} created file {}", col::bx_print(), fp.to_str().unwrap());
-
             } else {
                 errs::api::sys_err(w.err().unwrap())
             }
         }
-
     } else {
         errs::api::sys_err(res.err().unwrap());
     }

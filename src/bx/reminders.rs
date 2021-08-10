@@ -1,13 +1,10 @@
-
-use std::io::Error;
-use std::fs;
-use chrono::{Datelike, Local};
-use crate::bx::{timeline, settingparser};
+use crate::bx::{settingparser, timeline};
 use crate::colors::col;
 use crate::errs::api;
 use crate::pathutils::paths;
-
-
+use chrono::{Datelike, Local};
+use std::fs;
+use std::io::Error;
 
 pub fn run_reminders(path: &str) {
     let now = Local::now();
@@ -15,24 +12,19 @@ pub fn run_reminders(path: &str) {
     let d = now.day();
     let wkday = now.weekday();
 
-    
     let conf = get_conf_settings(&path);
-    
+
     if conf.is_ok() {
         let conf = conf.unwrap();
         let icon = settingparser::get_icon(conf);
-        
-        println!("{} {} {} {:?}", icon, mn, d, wkday);
 
+        println!("{} {} {} {:?}", icon, mn, d, wkday);
 
         // if cache_is_old() {
         //   do checks
         //} else {
         //  printcache
         //}
-
-        
-
     } else {
         let fmt_path = col::blue(&path);
         let s = format!("problem accessing bx's config file in '{}'", &fmt_path);
@@ -41,7 +33,6 @@ pub fn run_reminders(path: &str) {
 }
 
 fn get_conf_settings(path: &str) -> Result<String, Error> {
-
     let ext = paths::get_file(&"conf");
     let path = format!("{}{}", path, ext);
 

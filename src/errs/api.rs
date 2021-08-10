@@ -1,7 +1,6 @@
 use std::io::Error;
 use std::process::exit;
 
-
 pub fn basic_err(s: &str) {
     print!("\x1b[31;1;4m{}\x1b[0m {}\n", "error:", s);
 }
