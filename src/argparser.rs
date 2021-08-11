@@ -1,7 +1,7 @@
+use crate::colors::col;
 use crate::errs;
 use crate::funcs;
 
-#[allow(dead_code)]
 pub struct Bus {
     pub prompt_icon: String,
     pub file_type: String,
@@ -69,7 +69,17 @@ pub fn parse_args(args: &Vec<String>, path: &str) {
     if bus_is_valid(&b) {
         funcs::exec_func(b);
     } else {
-        println!("gooch");
+        let mut r = "error parsing arguments";
+
+        if b.func.len() == 0 {
+            r = "no action passed to bx";
+        } else if b.file_type.len() == 0 {
+            r = "no file type passed to bx"
+        }
+
+        let bx = col::blue("`bx -h`");
+        let s = format!("{} \n >> re-run command with {} flag for help", &r, &bx);
+        errs::api::crit_err(&s);
     }
 }
 

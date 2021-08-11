@@ -29,10 +29,21 @@ pub fn bx_path(p: &str) -> Result<String, io::Error> {
     return Ok(p.to_owned());
 }
 
-pub fn get_file(filetype: &str) -> &str {
+fn get_file(filetype: &str) -> &str {
     match filetype {
         "conf" => "/config.txt",
         "cache" => "/cache.txt",
+        "events" => "/events.txt",
+        "ideas" => "/ideas.txt",
+        "recurrents" => "/reminders.txt",
+        "todos" => "/todos.txt",
+        "wishlist" => "/wishlist.txt",
         _ => "",
     }
+}
+
+pub fn get_file_path(path: &str, filetype: &str) -> String {
+    let f = get_file(filetype);
+    let p = format!("{}{}", path, f);
+    return p.to_owned();
 }
