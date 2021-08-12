@@ -1,4 +1,5 @@
 extern crate chrono;
+extern crate crossterm;
 extern crate dirs;
 
 mod bx {
