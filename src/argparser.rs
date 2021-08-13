@@ -1,6 +1,6 @@
 use crate::colors::col;
 use crate::errs;
-use crate::funcs;
+use crate::funcs::exec;
 
 pub struct Bus {
     pub prompt_icon: String,
@@ -67,7 +67,7 @@ pub fn parse_args(args: &Vec<String>, path: &str) {
     } // end argparse loop
 
     if bus_is_valid(&b) {
-        funcs::exec_func(b);
+        exec::exec_func(b);
     } else {
         let mut r = "error parsing arguments";
 

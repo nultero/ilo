@@ -18,7 +18,10 @@ mod pathutils {
 }
 mod argparser;
 mod config;
-mod funcs;
+mod funcs {
+    pub mod exec;
+    pub mod inputs;
+}
 mod prompts;
 
 use bx::reminders;

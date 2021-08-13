@@ -5,13 +5,8 @@ use crate::errs;
 use crate::pathutils::paths;
 
 use std::fs;
+use crate::funcs::inputs;
 use std::io::*;
-
-// use crossterm::{execute,
-//     cursor::*,
-//     Result,
-//     terminal::{SetSize, size}
-// };
 
 const EVENT_STR_CHUNKS: [&str; 3] = ["event", "day", "month"];
 
@@ -42,6 +37,8 @@ pub fn exec_func(mut b: Bus) {
     }
 }
 
+
+
 fn add(b: &Bus) {
     println!("{} what to add to {}?", &b.prompt_icon, &b.file_type);
     let mut input = "".to_owned();
@@ -62,20 +59,30 @@ fn add(b: &Bus) {
         let s = format!("{}  @  {} {}", tmp[0], tmp[1], tmp[2]);
         input.push_str(&s);
     } else {
-        stdin.read_line(&mut input).unwrap();
+        // stdin.read_line(&mut input).unwrap();
+        input = inputs::read_normal_string().unwrap();
     }
 
     // need key capture / possibly lists w/ vim bindings and some sugar over the line writing
 
-    let mut contents = fs::read_to_string(&b.path).unwrap();
-    contents.push_str("\n");
-    input = input.replace("\n", ""); // strip newline for printing / not writing last newline to file
-    contents.push_str(&input);
+    if input == "<&&&>" {
+        println!("input interrupted");
 
-    fs::write(&b.path, &contents).unwrap();
+    } else if input.len() != 0 {
 
-    let out = col::blue(&b.file_type);
-    println!("wrote out `{}` to {}", input, out);
+        let mut contents = fs::read_to_string(&b.path).unwrap();
+        contents.push_str("\n");
+        input = input.replace("\n", ""); // strip newline for printing / not writing last newline to file
+        contents.push_str(&input);
+
+        fs::write(&b.path, &contents).unwrap();
+
+        let out = col::blue(&b.file_type);
+        println!("wrote out `{}` to {}", input, out);
+
+    } else {
+        println!("input empty");
+    }
 }
 
 fn ls(b: &Bus) {
