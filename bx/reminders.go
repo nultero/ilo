@@ -1,9 +1,8 @@
 package bx
 
 import (
-	"bx/errs"
+	"bx/fn"
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -28,7 +27,7 @@ func RunReminders(path, icon, config string) {
 
 	} else {
 		c := cache[1:]
-		if !IsEmpty(c) {
+		if !fn.IsEmpty(c) {
 			for i := range c {
 				fmt.Println(c[i])
 			}
@@ -37,28 +36,26 @@ func RunReminders(path, icon, config string) {
 }
 
 func doChecks(nDays int, today, month, path string) []string {
-	chx := []string{"events", "recurrents"}
+	// chx := []string{"events", "recurrents"}
 
-	for i := range chx {
+	fmt.Println("stopping here")
+	return []string{}
+	// for i := range chx {
 
-		p := path + glob(chx[i])
-		f, r := os.ReadFile(p)
-		if r != nil {
-			errs.ThrowX(r, fmt.Sprintf("error with the bx file at '%s'", p))
-		}
+	// 	p := path + glob(chx[i])
+	// 	f, r := os.ReadFile(p)
+	// 	if r != nil {
+	// 		errs.ThrowX(r, fmt.Sprintf("error with the bx file at '%s'", p))
+	// 	}
 
-		if chx[i] == "events" { // autocleaner logic
+	// 	if chx[i] == "events" { // autocleaner logic
 
-			rev := -1 * nDays // flips to behind current day
-			
+	// 		rev := -1 * nDays // flips to behind current day
 
-		}
-		
+	// 	}
 
-		fmt.Println(string(f))
-	}
+	// 	fmt.Println(string(f))
+	// }
 
-	return chx
+	// return chx
 }
-
-func 

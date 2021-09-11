@@ -1,4 +1,4 @@
-package bx
+package fn
 
 type Bus struct {
 	PromptIcon string

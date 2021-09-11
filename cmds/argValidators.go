@@ -1,4 +1,4 @@
-package main
+package cmds
 
 import (
 	"strings"
@@ -28,9 +28,9 @@ var ValidMapKeys = []string{
 	"\033[1;36m5 days\033[0m",
 }
 
-func _iterate(s string, sl []string) bool {
-	for i := range sl {
-		if s == sl[i] {
+func _iterate(s string, searchSlice []string) bool {
+	for i := range searchSlice {
+		if s == searchSlice[i] {
 			return true
 		}
 	}

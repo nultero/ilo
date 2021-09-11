@@ -10,6 +10,11 @@ func quit(s string) {
 	os.Exit(1)
 }
 
+func Throw(err string) {
+	s := fmt.Sprintf("%s %s", redError(), err)
+	quit(s)
+}
+
 func ThrowX(err error, desc string) {
 	s := fmt.Sprintf("%s %s \n >> %s", redError(), err, desc)
 	quit(s)
@@ -20,7 +25,7 @@ func ThrowSys(err error) {
 	quit(s)
 }
 
-func throwDuplArgError(this, prevFound string) {
+func ThrowDuplArgError(this, prevFound string) {
 	fmt.Printf("! >> '%s' found, but already passed '%s' as argument \n", this, prevFound)
 	fmt.Println(redError(), "cannot have two of the same type of argument")
 	os.Exit(1)

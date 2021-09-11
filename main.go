@@ -2,11 +2,15 @@ package main
 
 import (
 	"bx/bx"
+	"bx/cmds"
 	"bx/conf"
+	"bx/fn"
 	"os"
 )
 
-const PATH = "~/.nultero/tailbox/"
+// tview instead of promptui
+
+const PATH = "~/.tailbox/"
 
 //  ||
 //  |||||  ||  ||
@@ -15,7 +19,7 @@ const PATH = "~/.nultero/tailbox/"
 
 func main() {
 
-	p := bx.BxPath(PATH) // ^ verifies the above const, expands, etc.
+	p := bx.CheckPath(PATH)
 	icon, config := conf.Ok(p)
 
 	// still have to double check config
@@ -30,10 +34,7 @@ func main() {
 		bx.RunReminders(p, icon, config)
 
 	} else {
-
-		// b := bx.DefaultBus(icon, p)
-
-		// fmt.Println(b)
-
+		bus := fn.DefaultBus(icon, p)
+		cmds.ParseArgs(args, bus)
 	}
 }

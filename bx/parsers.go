@@ -8,18 +8,15 @@ import (
 	"strings"
 )
 
-// Finds search string in a text space; ignores lines starting with '#'
-// and throws an error if not found.
 func ParseString(txt, search string) (string, error) {
 
 	lines := strings.Split(txt, "\n")
 
 	for i := range lines {
-		ln := strings.TrimSpace(lines[i])
+		line := strings.TrimSpace(lines[i])
+		if line[0] != '#' { // ignore comment blocks
 
-		if ln[0] != '#' { // ignore comment blocks
-
-			s := strings.Split(ln, "=")
+			s := strings.Split(line, "=")
 			s[0] = strings.TrimSpace(s[0])
 			s[1] = strings.TrimSpace(s[1])
 
@@ -50,24 +47,4 @@ func getNumDaysAhead(conf string) int {
 	}
 
 	return numDays
-}
-
-// Takes a str or slice of strs as inputs.
-func IsEmpty(s interface{}) bool {
-
-	t, ok := s.(string)
-	if ok {
-		if len(t) == 0 {
-			return true
-		}
-	}
-
-	sl, ok := s.([]string)
-	if ok {
-		if len(sl) == 0 {
-			return true
-		}
-	}
-
-	return false
 }

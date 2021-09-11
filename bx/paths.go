@@ -5,12 +5,13 @@ import (
 	"os"
 )
 
-func BxPath(path string) string {
+// For helping validate several different kinds of paths.
+func CheckPath(path string) string {
 
 	if path[0] == '~' {
 		home := getHomeDir()
 		path = home + path[1:]
-	}
+	} // put in else for other
 
 	return path
 }
