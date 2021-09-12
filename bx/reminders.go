@@ -1,38 +1,38 @@
 package bx
 
 import (
-	"bx/fn"
 	"fmt"
-	"time"
 )
 
 // Checks bx's events cache -- if old, re-runs reminder calculations,
 // if not old, prints the date with whatever is in the cache.
 func RunReminders(path, icon, config string) {
 
-	now := time.Now()
-	today := now.Format("02 Mon")
-	month := now.Month().String()[0:3]
+	return
 
-	fmt.Println(icon, month, today)
+	// now := time.Now()
+	// today := now.Format("02 Mon")
+	// month := now.Month().String()[0:3]
 
-	cache := readCache(path)
+	// fmt.Println(icon, month, today)
 
-	if cacheIsOld(cache[0], today, path) {
+	// cache := readCache(path)
 
-		nDays := getNumDaysAhead(config)
-		items := doChecks(nDays, today, month, path)
-		fmt.Println(len(items))
-		// cacheResults(today, items)
+	// if cacheIsOld(cache[0], today, path) {
 
-	} else {
-		c := cache[1:]
-		if !fn.IsEmpty(c) {
-			for i := range c {
-				fmt.Println(c[i])
-			}
-		}
-	}
+	// 	nDays := getNumDaysAhead(config)
+	// 	items := doChecks(nDays, today, month, path)
+	// 	fmt.Println(len(items))
+	// 	// cacheResults(today, items)
+
+	// } else {
+	// 	c := cache[1:]
+	// 	if !fn.IsEmpty(c) {
+	// 		for i := range c {
+	// 			fmt.Println(c[i])
+	// 		}
+	// 	}
+	// }
 }
 
 func doChecks(nDays int, today, month, path string) []string {

@@ -1,6 +1,7 @@
 package bx
 
 import (
+	"bx/cmds/bxfiles"
 	"bx/errs"
 	"os"
 	"strings"
@@ -8,7 +9,7 @@ import (
 
 func readCache(path string) []string {
 
-	p := path + glob("cache")
+	p := path + bxfiles.Cache()
 
 	c, err := os.ReadFile(p)
 	if err != nil {
@@ -24,7 +25,7 @@ func cacheIsOld(cacheTop, day, path string) bool {
 		return true
 	}
 
-	cacheFile, cErr := os.Stat(path + glob("cache"))
+	cacheFile, cErr := os.Stat(path + bxfiles.Cache())
 	if cErr != nil {
 		errs.ThrowSys(cErr)
 	}
@@ -34,7 +35,7 @@ func cacheIsOld(cacheTop, day, path string) bool {
 	fileChecks := []string{"events", "recurrents"}
 
 	for i := range fileChecks {
-		file, err := os.Stat(path + glob(fileChecks[i]))
+		file, err := os.Stat(path)
 		if err != nil {
 			errs.ThrowSys(err)
 		}
@@ -44,6 +45,7 @@ func cacheIsOld(cacheTop, day, path string) bool {
 		if cModTime.Before(fMod) {
 			return true
 		}
+		i++
 	}
 
 	return false

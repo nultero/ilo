@@ -39,3 +39,8 @@ func throwErr(r error) {
 	fmt.Println(redError(), r)
 	os.Exit(1)
 }
+
+func ThrowQuiet(s string) {
+	fmt.Println(s)
+	os.Exit(0)
+}

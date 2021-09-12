@@ -20,13 +20,13 @@ const PATH = "~/.tailbox/"
 func main() {
 
 	p := bx.CheckPath(PATH)
-	icon, config := conf.Ok(p)
+	config, err := conf.Ok(p)
+	if err != nil {
+		conf.Fix(p)
+		return
+	}
 
-	// still have to double check config
-	// but mostly cleaner than it was before
-
-	// the ux for adding things is extremely unclear
-	// color the parts being editing for focus etc.
+	icon, _ := bx.ParseString(config, "icon")
 
 	args := os.Args[1:]
 
