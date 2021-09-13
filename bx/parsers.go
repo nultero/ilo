@@ -2,6 +2,7 @@ package bx
 
 import (
 	"bx/errs"
+	"bx/fn"
 	"errors"
 	"fmt"
 	"strconv"
@@ -14,14 +15,16 @@ func ParseString(txt, search string) (string, error) {
 
 	for i := range lines {
 		line := strings.TrimSpace(lines[i])
-		if line[0] != '#' { // ignore comment blocks
+		if !fn.IsEmpty(line) {
+			if line[0] != '#' { // ignore comment blocks
 
-			s := strings.Split(line, "=")
-			s[0] = strings.TrimSpace(s[0])
-			s[1] = strings.TrimSpace(s[1])
+				s := strings.Split(line, "=")
+				s[0] = strings.TrimSpace(s[0])
+				s[1] = strings.TrimSpace(s[1])
 
-			if s[0] == search {
-				return s[1], nil
+				if s[0] == search {
+					return s[1], nil
+				}
 			}
 		}
 	}

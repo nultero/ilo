@@ -27,6 +27,7 @@ func main() {
 	}
 
 	icon, _ := bx.ParseString(config, "icon")
+	icon += " "
 
 	args := os.Args[1:]
 

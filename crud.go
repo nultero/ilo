@@ -73,13 +73,6 @@ package main
 // 	writeOut(path, opts, true)
 // }
 
-// //  ||   ||| |||| |||
-// //  ||    |   |    |
-// //  ||    |    |   |
-// //  |||| ||| ||||  |
-
-// // \-------------------------
-
 // // Lists contents of argpath.
 // func list(path string, fileType string) {
 // 	ls, _ := os.ReadFile(pathGlob(fileType))

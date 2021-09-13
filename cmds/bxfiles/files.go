@@ -6,7 +6,6 @@ var files = []string{
 	"events.txt",
 	"ideas.txt",
 	"recurrent_reminders.txt",
-	"reminders.txt",
 	"todos.txt",
 	"wishlist.txt",
 }
@@ -21,6 +20,14 @@ var DefaultConfig = []byte(
 func All() []string {
 	return files
 }
+
+func CheckFiles() []string {
+	return []string{
+		files[2],
+		files[4],
+	}
+}
+
 func Cache() string {
 	return files[0]
 }
@@ -36,12 +43,9 @@ func Ideas() string {
 func Recurrents() string {
 	return files[4]
 }
-func Reminders() string {
+func Todos() string {
 	return files[5]
 }
-func Todos() string {
-	return files[6]
-}
 func Wishlist() string {
-	return files[7]
+	return files[6]
 }

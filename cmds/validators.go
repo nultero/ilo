@@ -6,18 +6,21 @@ import (
 
 var ValidArgs = []string{
 	"add",
+	"defaults",
 	"edit",
 	"list",
 	"remove",
 }
 
-var ValidKinds = []string{
+var ValidFiles = []string{
 	"events",
 	"ideas",
 	"recurrents",
 	"todos",
 	"wishlist",
 }
+
+var CharMap = []byte("abcdef")
 
 var ValidMapKeys = []string{
 	"\033[1;31mtoday\033[0m",
@@ -42,7 +45,7 @@ func isValidFunc(arg string) bool {
 }
 
 func isValidFileType(arg string) bool {
-	return _iterate(arg, ValidKinds)
+	return _iterate(arg, ValidFiles)
 }
 
 func isFlag(arg string) bool {
