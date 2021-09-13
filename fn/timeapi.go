@@ -1,15 +1,11 @@
-package main
+package fn
 
 import (
+	"bx/errs"
 	"strconv"
+	"strings"
 	"time"
 )
-
-type month struct {
-	index int
-	name  string
-	days  int
-}
 
 var months = []month{
 	{1, "Jan", 31},
@@ -26,22 +22,35 @@ var months = []month{
 	{12, "Dec", 31},
 }
 
-func rollForwardDay(d int, mn string) (int, string) {
-	d++
-	if d > getDays(mn) {
-		d = 1
-		mn = getNextMonth(mn)
+func SetRollDay(unfmt, month string) Day {
+
+	s := strings.TrimSpace(unfmt)
+	ss := strings.Split(s, " ")
+
+	di, err := strconv.Atoi(ss[0])
+	if err != nil {
+		errs.ThrowSys(err)
 	}
-	return d, mn
+
+	return Day{di, month}
 }
 
-func rollBackDay(d int, mn string) (int, string) {
-	d--
-	if d < 1 {
-		mn = getPrevMonth(mn)
-		d = getDays(mn)
+func RollForwardDay(d Day) Day {
+	d.Index++
+	if d.Index > getDays(d.MonthName) {
+		d.Index = 1
+		d.MonthName = getNextMonth(d.MonthName)
 	}
-	return d, mn
+	return d
+}
+
+func RollBackDay(d Day) Day {
+	d.Index--
+	if d.Index < 1 {
+		d.MonthName = getPrevMonth(d.MonthName)
+		d.Index = getDays(d.MonthName)
+	}
+	return d
 }
 
 // Takes a month name string of 3 letters and returns n days. If Feb, will check if leap year or not.

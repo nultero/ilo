@@ -40,21 +40,42 @@ func RunReminders(path, icon, config string) {
 func doChecks(nDays int, today, month, path string) []string {
 
 	chx := bxfiles.CheckFiles()
-	for i := range chx {
 
-		p := path + chx[i]
-		f, r := os.ReadFile(p)
-		if r != nil {
-			errs.ThrowX(r, fmt.Sprintf("error with the bx file at '%s'", p))
+	for i := range chx {
+		f, err := os.ReadFile(path + chx[i])
+		if err != nil {
+			errs.ThrowX(err, fmt.Sprintf("error with the bx file at '%s'", path+chx[i]))
 		}
+
+		//
+
+		d := fn.SetRollDay(today, month)
+
+		//
 
 		if chx[i] == bxfiles.Events() { // autocleaner logic
 
-			// rev := -1 * nDays // flips to behind current day
+			for i := 0; i < nDays; i++ {
+				d = fn.RollBackDay(d)
+			}
 
+			rev := -1 * nDays // flips to behind current day
+
+			for rev < nDays {
+				d = fn.RollForwardDay(d)
+				rev++
+				fmt.Println("d:= ", d.Index, d.MonthName)
+			}
+
+		} else {
+			for i := 0; i < nDays; i++ {
+				d = fn.RollForwardDay(d)
+				fmt.Println("d:= ", d.Index, d.MonthName)
+			}
 		}
 
-		fmt.Println(string(f))
+		// still need to do the file parsing on the date checks --
+		// and do it right, since the last time it was buggy
 	}
 
 	return chx

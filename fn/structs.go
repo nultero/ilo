@@ -1,5 +1,16 @@
 package fn
 
+type Day struct {
+	Index     int
+	MonthName string
+}
+
+type month struct {
+	index int
+	name  string
+	days  int
+}
+
 type Bus struct {
 	PromptIcon string
 	FileType   string

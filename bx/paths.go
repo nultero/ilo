@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// For helping validate several different kinds of paths.
+// For helping validate several different kinds of main paths.
 func CheckPath(path string) string {
 
 	if path[0] == '~' {
