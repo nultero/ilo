@@ -4,7 +4,7 @@ import "fmt"
 
 // Returns blued ASCII
 func Blue(s string) string {
-	return fmt.Sprintf("\x1b[32;1;4m%v\x1b[0m)", s)
+	return fmt.Sprintf("\x1b[32;1;4m%v\x1b[0m", s)
 }
 
 // Returns bolded ASCII

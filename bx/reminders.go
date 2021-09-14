@@ -42,10 +42,12 @@ func doChecks(nDays int, today, month, path string) []string {
 	chx := bxfiles.CheckFiles()
 
 	for i := range chx {
-		f, err := os.ReadFile(path + chx[i])
+		_, err := os.ReadFile(path + chx[i])
 		if err != nil {
 			errs.ThrowX(err, fmt.Sprintf("error with the bx file at '%s'", path+chx[i]))
 		}
+
+		//
 
 		//
 

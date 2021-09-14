@@ -49,6 +49,8 @@ func ParseArgs(args []string, b fn.Bus) {
 
 	switch b.Funct {
 	case "add":
+		add(b)
+
 	case "edit":
 	case "list":
 		ls(b)
