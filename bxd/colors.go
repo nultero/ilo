@@ -1,4 +1,4 @@
-package bx
+package bxd
 
 import "fmt"
 

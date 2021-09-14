@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bx/bx"
+	"bx/bxd"
 	"bx/cmds"
 	"bx/conf"
 	"bx/fn"
@@ -19,20 +19,20 @@ const PATH = "~/.tailbox/"
 
 func main() {
 
-	p := bx.CheckPath(PATH)
+	p := bxd.CheckPath(PATH)
 	config, err := conf.Ok(p)
 	if err != nil {
 		conf.Fix(p)
 		return
 	}
 
-	icon, _ := bx.ParseString(config, "icon")
+	icon, _ := bxd.ParseString(config, "icon")
 	icon += " "
 
 	args := os.Args[1:]
 
 	if len(args) == 0 {
-		bx.RunReminders(p, icon, config)
+		bxd.RunReminders(p, icon, config)
 
 	} else {
 		bus := fn.DefaultBus(icon, p)

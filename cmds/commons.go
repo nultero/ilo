@@ -1,7 +1,7 @@
 package cmds
 
 import (
-	"bx/bx"
+	"bx/bxd"
 	"bx/errs"
 	"fmt"
 	"os"
@@ -21,5 +21,5 @@ func WriteOut(path, s string) {
 		errs.ThrowSys(r)
 	}
 
-	fmt.Println(bx.Blue("<✓>"))
+	fmt.Println(bxd.Blue("<✓>"))
 }

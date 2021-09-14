@@ -1,7 +1,7 @@
 package conf
 
 import (
-	"bx/bx"
+	"bx/bxd"
 	"bx/cmds/bxfiles"
 	"bx/errs"
 	"fmt"
@@ -36,7 +36,7 @@ func Fix(basePath string) {
 func confNotFound(path string, prompt string) {
 
 	fmt.Printf("%s No config file found. \n", prompt)
-	fmt.Printf("%s Default config path is: %s \n", prompt, bx.Emph(path+bxfiles.Config()))
+	fmt.Printf("%s Default config path is: %s \n", prompt, bxd.Emph(path+bxfiles.Config()))
 	fmt.Printf("%s Create new config? (y | n) \t\n(bx will just exit if not 'y') : ", prompt)
 
 	if strings.ToLower(grabInput()) == "y" {
