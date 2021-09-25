@@ -6,31 +6,6 @@ package main
 // 	"strings"
 // )
 
-// //     |     |||   |||
-// //    | |    |  |  |  |
-// //   |||||   |  |  |  |
-// //  |     |  |||   |||
-
-// // takes & adds a str input onto a given filetype
-// func add(b bus) {
-
-// 	path := pathGlob(b.FileType)
-// 	datum, _ := os.ReadFile(path)
-
-// 	data := string(datum)
-
-// 	fmt.Println("Adding to '" + b.FileType + "':")
-// 	s := handleStringInput(b.PromptIcon)
-
-// 	checks := []string{}
-// 	if needsInfo(b.FileType) {
-// 		checks = addInfo(b.PromptIcon)
-// 	}
-
-// 	if !isEmpty(checks) {
-// 		s = fmt.Sprintf("%s @ %s %s", s, checks[0], checks[1])
-// 	}
-
 // 	data = data + "\n" + s
 // 	// still needs stuff like for DateTimes and whatnot
 // 	// based on fileType

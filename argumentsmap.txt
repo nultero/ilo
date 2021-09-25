@@ -18,7 +18,6 @@ $  bx       |  add     |\
             |
             |                  | * todo      --> intended to print from shellrc on open, all about being annoying and fixable
             |                  | * idea      --> intended for quick jots when on the command line, decluttering my other CLI spaces
-            |                  | * cron      --> intended for simple cron jobs, might be future chunk feature for myself
             |
             |   FLAGS
             |  filter    |  -f      --> filters results from e.g. the file being pulled from

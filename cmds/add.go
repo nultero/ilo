@@ -7,10 +7,6 @@ import (
 	"fmt"
 )
 
-func sliceOffTxt(s string) string {
-	return s[:len(s)-4]
-}
-
 //     |     |||   |||
 //    | |    |  |  |  |
 //   |||||   |  |  |  |
@@ -42,6 +38,5 @@ func add(b fn.Bus) {
 		output += fn.GetInput()
 	}
 
-	path := b.Path + b.FileType
-	WriteOut(path, output)
+	writeOut(b.GetPath(), output)
 }

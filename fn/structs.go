@@ -28,3 +28,7 @@ func DefaultBus(icon, path string) Bus {
 		Help:       false,
 	}
 }
+
+func (b Bus) GetPath() string {
+	return b.Path + b.FileType
+}

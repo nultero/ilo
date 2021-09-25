@@ -8,6 +8,8 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+const REMOVE = true
+
 func ParseArgs(args []string, b fn.Bus) {
 
 	for i := range args {
@@ -52,11 +54,13 @@ func ParseArgs(args []string, b fn.Bus) {
 		add(b)
 
 	case "edit":
+		change(b, !REMOVE)
+
 	case "list":
 		ls(b)
 
 	case "remove":
-		fmt.Println(b.Funct)
+		change(b, REMOVE)
 	}
 }
 

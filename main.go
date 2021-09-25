@@ -8,8 +8,6 @@ import (
 	"os"
 )
 
-// tview instead of promptui
-
 const PATH = "~/.tailbox/"
 
 //  ||
