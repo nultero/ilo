@@ -3,8 +3,10 @@ package cmds
 import (
 	"bx/bxd"
 	"bx/errs"
+	"bx/fn"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/manifoldco/promptui"
 )
@@ -55,4 +57,28 @@ func cleanLines(lines []string) string {
 
 func sliceOffTxt(s string) string {
 	return s[:len(s)-4]
+}
+
+// True == yes.
+func getYesOrNo(s ...string) bool {
+	for {
+
+		fmt.Print("\n")
+		if len(s) > 0 {
+			fmt.Println(s[0])
+		}
+
+		fmt.Print("> ", bxd.Emph("[ Y / n ] "))
+		confirm := strings.ToLower(fn.GetInput())
+
+		if len(confirm) == 0 || strings.Contains(confirm, "y") {
+			return true
+		}
+
+		if strings.Contains(confirm, "n") {
+			return false
+		}
+
+		fmt.Println("\n" + bxd.Emph("invalid input"))
+	}
 }

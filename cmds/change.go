@@ -26,21 +26,7 @@ func isDone(remove bool) bool {
 		prompt += "editing?"
 	}
 
-	for {
-		fmt.Println(prompt)
-		fmt.Print(bxd.Emph("[ Y / n ] "))
-		confirm := strings.ToLower(fn.GetInput())
-
-		if len(confirm) == 0 || strings.Contains(confirm, "y") {
-			return true
-		}
-
-		if strings.Contains(confirm, "n") {
-			return false
-		}
-
-		fmt.Println(bxd.Emph("invalid input"))
-	}
+	return getYesOrNo(prompt)
 }
 
 func change(b fn.Bus, remove bool) {
@@ -65,32 +51,21 @@ func change(b fn.Bus, remove bool) {
 				}
 			}
 			lines = filteredLines
+
+		} else { // !remove == edit
+			fmt.Println("editing '" + bxd.Emph(lines[i]) + "'")
+			lines[i] = fn.GetInput()
 		}
 
 		done = isDone(remove)
 	}
 
-	writeOut(b.GetPath(), cleanLines(lines))
-}
-
-func edit(b fn.Bus) {
-	data := getData(b.GetPath())
-	lines := strings.Split(data, "\n")
-
-	s := "which line to edit?"
-	i := selector(s, lines)
-
-	fmt.Println(i, lines[i])
+	if confirmChanges() {
+		writeOut(b.GetPath(), cleanLines(lines))
+	}
 
 }
 
-func remove(b fn.Bus) {
-	// data := getData(b.GetPath())
-	// lines := strings.Split(data, "\n")
-
-	// s := "which line to remove?"
-	// i := selector(s, lines)
-
-	// writeOut(b.GetPath(), cleanLines(filteredLines))
-	fmt.Println("done!")
+func confirmChanges() bool {
+	return getYesOrNo("> confirm changes?")
 }

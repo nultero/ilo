@@ -2,7 +2,9 @@ package cmds
 
 import (
 	"bx/bxd"
+	"bx/errs"
 	"bx/fn"
+	"os"
 
 	"fmt"
 )
@@ -13,6 +15,11 @@ import (
 //  |     |  |||   |||
 
 func add(b fn.Bus) {
+
+	original, err := os.ReadFile(b.GetPath())
+	if err != nil {
+		errs.ThrowSys(err)
+	}
 
 	slice := sliceOffTxt(b.FileType)
 	fmt.Println("what to add to", bxd.Emph(slice), "?")
@@ -38,5 +45,6 @@ func add(b fn.Bus) {
 		output += fn.GetInput()
 	}
 
+	output = string(original) + output
 	writeOut(b.GetPath(), output)
 }
