@@ -9,12 +9,14 @@ var datesToCheck = []Day{
 	{29, "Jan"},
 	{30, "Oct"},
 	{1, "Apr"},
+	{30, "Dec"},
 }
 
 var mockEventDates = []Day{
 	{2, "Feb"},
 	{2, "Nov"},
 	{4, "Apr"},
+	{2, "Jan"},
 }
 
 func TestRollForwardApi(t *testing.T) {
@@ -38,8 +40,11 @@ func TestRollForwardApi(t *testing.T) {
 			s += strconv.Itoa(i) + ","
 		}
 	}
-	s = s[:len(s)-1]
-	t.Errorf("TestRollForward failed at case(s): %s", s)
+
+	if len(s) > 0 {
+		s = s[:len(s)-1]
+		t.Errorf("TestRollForward failed at case(s): %s", s)
+	}
 }
 
 // Makes a bare slice of ints for the test cases to increment if successful.

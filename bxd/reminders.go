@@ -41,10 +41,10 @@ func doChecks(nDays int, today, month, path string) []string {
 
 	chx := bxfiles.CheckFiles()
 
-	for i := range chx {
-		_, err := os.ReadFile(path + chx[i])
+	for _, file := range chx {
+		_, err := os.ReadFile(path + file)
 		if err != nil {
-			errs.ThrowX(err, fmt.Sprintf("error with the bx file at '%s'", path+chx[i]))
+			errs.ThrowX(err, fmt.Sprintf("error with the bx file at '%s'", path+file))
 		}
 
 		//
@@ -55,7 +55,7 @@ func doChecks(nDays int, today, month, path string) []string {
 
 		//
 
-		if chx[i] == bxfiles.Events() { // autocleaner logic
+		if file == bxfiles.Events() { // autocleaner logic
 
 			for i := 0; i < nDays; i++ {
 				d = fn.RollBackDay(d)

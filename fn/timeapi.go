@@ -8,18 +8,18 @@ import (
 )
 
 var months = []month{
-	{1, "Jan", 31},
-	{2, "Feb", 28},
-	{3, "Mar", 31},
-	{4, "Apr", 30},
-	{5, "May", 31},
-	{6, "Jun", 30},
-	{7, "Jul", 31},
-	{8, "Aug", 31},
-	{9, "Sep", 30},
-	{10, "Oct", 31},
-	{11, "Nov", 30},
-	{12, "Dec", 31},
+	{"Jan", 31, 1},
+	{"Feb", 28, 2},
+	{"Mar", 31, 3},
+	{"Apr", 30, 4},
+	{"May", 31, 5},
+	{"Jun", 30, 6},
+	{"Jul", 31, 7},
+	{"Aug", 31, 8},
+	{"Sep", 30, 9},
+	{"Oct", 31, 10},
+	{"Nov", 30, 11},
+	{"Dec", 31, 12},
 }
 
 func SetRollDay(unfmt, month string) Day {
@@ -56,9 +56,9 @@ func RollBackDay(d Day) Day {
 // Takes a month name string of 3 letters and returns n days. If Feb, will check if leap year or not.
 // ( if I'm still using this on a leap year, I'll be ecstatic. Written 2021 )
 func getDays(mn string) int {
-	for i := range months {
-		if months[i].name == mn {
-			if months[i].name == "Feb" {
+	for _, m := range months {
+		if m.name == mn {
+			if m.name == "Feb" {
 				var leap int
 				yr, _ := strconv.Atoi(time.Now().Format("2006"))
 				if yr%4 == 0 {
@@ -69,7 +69,7 @@ func getDays(mn string) int {
 				return leap
 			}
 
-			return months[i].days
+			return m.days
 		}
 	}
 	return 0
@@ -102,7 +102,13 @@ func getNextMonth(mn string) string {
 		i++
 	}
 
-	return months[i].name
+	for _, m := range months {
+		if m.index == i {
+			return m.name
+		}
+	}
+
+	return months[i-1].name
 }
 
 func getNextMonthsDays(mn string) int {
@@ -133,9 +139,9 @@ func getNextMonthsDays(mn string) int {
 
 // Takes month name string of 3 letters, returns the index of that month, starting at 1 for Jan.
 func getIndex(mn string) int {
-	for i := range months {
-		if months[i].name == mn {
-			return months[i].index
+	for _, m := range months {
+		if m.name == mn {
+			return m.index
 		}
 	}
 	return 0

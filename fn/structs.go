@@ -6,9 +6,9 @@ type Day struct {
 }
 
 type month struct {
-	index int
 	name  string
 	days  int
+	index int
 }
 
 type Bus struct {
