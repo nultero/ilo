@@ -21,13 +21,6 @@ func All() []string {
 	return files
 }
 
-func CheckFiles() []string {
-	return []string{
-		files[2],
-		files[4],
-	}
-}
-
 func Cache() string {
 	return files[0]
 }

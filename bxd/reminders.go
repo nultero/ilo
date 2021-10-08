@@ -17,7 +17,7 @@ func RunReminders(path, icon, config string) {
 	today := now.Format("02 Mon")
 	month := now.Month().String()[0:3]
 
-	fmt.Println(icon+" ", month, today)
+	printStatus(icon, month, today)
 
 	cache := readCache(path)
 
@@ -25,16 +25,27 @@ func RunReminders(path, icon, config string) {
 
 		nDays := getNumDaysAhead(config)
 		items := doChecks(nDays, today, month, path)
+		events := checkEvents(nDays, today, month, path)
+
 		cacheResults(cacheMesh(today, items))
 
 	} else {
-		c := cache[1:]
-		if !fn.IsEmpty(c) {
-			for i := range c {
-				fmt.Println(c[i])
+		cache = cache[1:]
+		if !fn.IsEmpty(cache) {
+			for _, line := range cache {
+				fmt.Println(line)
 			}
 		}
 	}
+}
+
+func checkEvents(nDays int, today, month, path string) []string {
+
+	// Events are *not* recurrent, and ergo need an autocleaner
+	// for ones that have already passed
+
+	file := bxfiles.Events()
+
 }
 
 func doChecks(nDays int, today, month, path string) []string {
@@ -94,3 +105,7 @@ func doChecks(nDays int, today, month, path string) []string {
 // 	s := colorate("** bx's autoclean has run", []int{90, 210, 110})
 // 	fmt.Println(s)
 // }
+
+func printStatus(icon, month, day string) {
+	fmt.Println(icon+" ", month, day)
+}
