@@ -1,5 +1,5 @@
 config constants:
-    PATH  ->  the default Tailbox dir where all the files live
+    PATH  ->  the default cursebox dir where all the files live
 
 
   tailbox (shortens to bx)
