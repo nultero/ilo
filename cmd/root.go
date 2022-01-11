@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bx/cmd/sched"
+	"bx/cmd/vars"
 
 	"github.com/nultero/tics"
 	"github.com/spf13/cobra"
@@ -29,14 +30,14 @@ func init() {
 }
 
 func initConfig() {
-	confMap = tics.CobraRootInitBoilerPlate(confMap, true)
-	confPath := confMap[confFile]
+	vars.ConfMap = tics.CobraRootInitBoilerPlate(vars.ConfMap, true)
+	confPath := vars.ConfMap[vars.ConfFile]
 	viper.SetConfigFile(confPath)
 
 	// If a config file is found, read it in, else make one with prompt.
 	err := viper.ReadInConfig()
 	if err != nil {
-		tics.RunConfPrompts("cursebox", confMap, defaultSettings)
+		tics.RunConfPrompts("cursebox", vars.ConfMap, vars.DefaultSettings)
 		tics.ThrowQuiet("")
 	}
 }

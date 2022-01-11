@@ -2,7 +2,7 @@ config constants:
     PATH  ->  the default cursebox dir where all the files live
 
 
-  tailbox (shortens to bx)
+  cursebox (shortens to bx)
 $  bx       |  add     |\
             |          | \
             |  edit    |--\ (all same arguments for the below)
