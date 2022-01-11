@@ -1,6 +1,7 @@
 package sched
 
 import (
+	"bx/cmd/calbox"
 	"bx/cmd/fsys"
 	"bx/cmd/timebox"
 	"fmt"
@@ -30,6 +31,8 @@ func Sample(cmd *cobra.Command, args []string) {
 		// perform the checks anyway, because cache does not exist
 	}
 
+	s := calbox.DrawBasic()
+	fmt.Println(s)
 	//check against cache, see if same as current day
 
 	// if so, just print

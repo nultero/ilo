@@ -3,7 +3,7 @@ package sched
 import (
 	"fmt"
 	"math/rand"
-	"os"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 )
@@ -41,17 +41,14 @@ func makebox(s tcell.Screen) {
 	s.Show()
 }
 
-func Selector() {
-
+func Selector() error {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
-	s, e := tcell.NewScreen()
-	if e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
+	s, err := tcell.NewScreen()
+	if err != nil {
+		return err
 	}
-	if e = s.Init(); e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
+	if err = s.Init(); err != nil {
+		return err
 	}
 
 	s.SetStyle(tcell.StyleDefault.
@@ -59,32 +56,57 @@ func Selector() {
 		Background(tcell.ColorBlack))
 	s.Clear()
 
-	stop := make(chan struct{})
+	sig := make(chan struct{})
 	go func() {
 		for {
 			ev := s.PollEvent()
 			switch ev := ev.(type) {
+
 			case *tcell.EventKey:
 				switch ev.Key() {
-				case tcell.KeyEscape, tcell.KeyEnter, tcell.KeyCtrlC:
-					close(stop)
+				case tcell.KeyRune:
+					switch ev.Rune() {
+					case 'j':
+						close(sig)
+						return
+					}
+				case tcell.KeyEscape, tcell.KeyEnter, tcell.KeyCtrlC, tcell.KeyRight:
+					close(sig)
 					return
 				case tcell.KeyCtrlL:
 					s.Sync()
 				}
+
 			case *tcell.EventResize:
 				s.Sync()
 			}
 		}
 	}()
 
-	for {
-		_, stillgoing := <-stop
-		if !stillgoing {
-			break
-		}
-		makebox(s)
-	}
+	rand.Seed(time.Hour.Nanoseconds())
 
+	sct := struct{}{}
+	cnt := 0
+	dur := time.Duration(0)
+	for cnt < 100000 {
+		select {
+		case <-sig:
+			cnt = 100000
+		case <-time.After(time.Millisecond * 50):
+		}
+		start := time.Now()
+		makebox(s)
+		cnt++
+		dur += time.Since(start)
+
+		// _, stillgoing := <-stop
+		// if !stillgoing {
+		// 	break
+		// }
+		// makebox(s)
+	}
 	s.Fini()
+	fmt.Println(sct)
+
+	return nil
 }

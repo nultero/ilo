@@ -1,23 +1,21 @@
 package calbox
 
-// type flat string
+const (
+	flat = "━"
+	up   = "┻"
+	down = "┳"
+	blft = "┗"
+	brt  = "┗"
+	ulft = "┏"
+	urt  = "┓"
+	vt   = "┃"
+)
 
-// var Flat flat = "━"
-
-// func (f *flat) Up() {
-// 	*f = "┻"
-// }
-
-// func (f *flat) Down() {
-// 	*f = "┳"
-// }
-
-// type corner struct{}
-
-// func Corner() corner {
-// 	return corner{}
-// }
-
-// func (c *corner) BottomLeft() string {
-// 	return "┗"
-// }
+func baseLft(n int) []string {
+	b := []string{ulft}
+	for i := 0; i < n; i++ {
+		b = append(b, vt)
+	}
+	b = append(b, blft)
+	return b
+}
