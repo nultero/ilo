@@ -1,21 +1,14 @@
 package calbox
 
-const (
-	flat = "━"
-	up   = "┻"
-	down = "┳"
-	blft = "┗"
-	brt  = "┗"
-	ulft = "┏"
-	urt  = "┓"
-	vt   = "┃"
-)
-
-func baseLft(n int) []string {
-	b := []string{ulft}
-	for i := 0; i < n; i++ {
-		b = append(b, vt)
+func baseLft(cs charSet, n int) []string {
+	b := []string{cs.ul}
+	for i := 1; i < n; i++ {
+		if i%2 == 0 {
+			b = append(b, cs.pr)
+		} else {
+			b = append(b, cs.vt)
+		}
 	}
-	b = append(b, blft)
+	b = append(b, cs.bl)
 	return b
 }
