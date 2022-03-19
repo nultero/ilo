@@ -4,11 +4,13 @@ import (
 	"bx/cmd/calbox"
 	"bx/cmd/fsys"
 	"bx/cmd/timebox"
+	"bx/cmd/vars"
 	"fmt"
 	"os"
 
 	"github.com/nultero/tics"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // Checks the current day against the schedule --
@@ -19,7 +21,8 @@ import (
 // and whatever is in the schedule.
 func Sample(cmd *cobra.Command, args []string) {
 	tb := timebox.Today()
-	fmt.Println(tb.String())
+	pi := viper.GetString(vars.PromptIcon)
+	fmt.Printf("%v  %v\n", pi, tb.String())
 
 	// cacheBytes, err := fsys.ReadCache()
 	_, err := fsys.ReadCache()

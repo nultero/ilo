@@ -19,7 +19,7 @@ func DrawBasic() string {
 
 		} else {
 			for i := 0; i < dys*4; i++ {
-				cal[wk] += "0"
+				cal[wk] += " "
 			}
 
 		}

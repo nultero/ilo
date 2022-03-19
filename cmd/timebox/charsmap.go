@@ -15,6 +15,7 @@ func trnsltMnth(m string) string {
 	for _, lt := range m {
 		if sqr, ok := chars[lt]; ok {
 			chrs = append(chrs, sqr)
+			chrs = append(chrs, ' ')
 		}
 	}
 	return string(chrs)
