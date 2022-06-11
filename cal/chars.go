@@ -1,4 +1,4 @@
-package calbox
+package cal
 
 type charSet struct {
 	fl, bl, br, pl, pr, ul, ur, vt string

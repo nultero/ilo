@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bx/cmd"
+	"ilo/cmd"
 )
 
 func main() {

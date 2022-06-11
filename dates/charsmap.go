@@ -1,4 +1,4 @@
-package timebox
+package dates
 
 var chars = map[rune]rune{
 	'a': '🄰', 'b': '🄱', 'c': '🄲', 'd': '🄳',
@@ -8,15 +8,4 @@ var chars = map[rune]rune{
 	'q': '🅀', 'r': '🅁', 's': '🅂', 't': '🅃',
 	'u': '🅄', 'v': '🅅', 'w': '🅆', 'x': '🅇',
 	'y': '🅈', 'z': '🅉',
-}
-
-func trnsltMnth(m string) string {
-	chrs := []rune{}
-	for _, lt := range m {
-		if sqr, ok := chars[lt]; ok {
-			chrs = append(chrs, sqr)
-			chrs = append(chrs, ' ')
-		}
-	}
-	return string(chrs)
 }

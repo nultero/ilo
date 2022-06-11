@@ -1,43 +1,31 @@
 package cmd
 
 import (
-	"bx/cmd/sched"
-	"bx/cmd/vars"
+	"ilo/cal"
 
-	"github.com/nultero/tics"
 	"github.com/spf13/cobra"
-
-	"github.com/spf13/viper"
 )
 
-// When run with no args, cursebox will print the current month & day,
-// and briefly check some schedules.
+var cfgFile string = "?"
+
+// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "bx",
-	Short: "Dead simple thingamajig",
-	Run:   sched.Sample,
+	Use:   "ilo",
+	Short: "a calendar; 'interactive ledger for ops' in fancy",
+
+	Run: func(cmd *cobra.Command, args []string) {
+		cal.Glance()
+	},
 }
 
 func Execute() {
-	cobra.CheckErr(rootCmd.Execute())
+	err := rootCmd.Execute()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-
-	// TODO calendar flag for vis?
-	// rootCmd.Flags().BoolVarP(&RecurseFlag, "recursive", "r", false, "traverses subdirectories wherever novem was called")
-}
-
-func initConfig() {
-	vars.ConfMap = tics.CobraRootInitBoilerPlate(vars.ConfMap, true)
-	confPath := vars.ConfMap[vars.ConfFile]
-	viper.SetConfigFile(confPath)
-
-	// If a config file is found, read it in, else make one with prompt.
-	err := viper.ReadInConfig()
-	if err != nil {
-		tics.RunConfPrompts("cursebox", vars.ConfMap, vars.DefaultSettings)
-		tics.ThrowQuiet("")
-	}
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/config/.ilo.yaml)")
+	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
